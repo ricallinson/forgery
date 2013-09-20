@@ -1,3 +1,11 @@
+/*
+    __WARNING: WORK IN PROGRESS__
+
+    Forgery is a minimal and flexible golang web application framework, providing a robust set of 
+    features for building single and multi-page, web applications.
+
+    Note: This project started out as a clone of the superb Node.js library [Express](http://expressjs.com/).
+*/
 package forgery
 
 import(
