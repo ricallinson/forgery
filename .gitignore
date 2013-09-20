@@ -1,22 +1,69 @@
-# Compiled Object files, Static and Dynamic libs (Shared Objects)
-*.o
-*.a
-*.so
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
 
-# Folders
-_obj
-_test
+# rails specific
+*.sqlite3
+config/database.yml
+log/*
+tmp/*
 
-# Architecture specific extensions/prefixes
-*.[568vq]
-[568vq].out
+# java specific
+*.class
 
-*.cgo1.go
-*.cgo2.c
-_cgo_defun.c
-_cgo_gotypes.go
-_cgo_export.*
+# python specific
+*.pyc
 
-_testmain.go
+# xcode/iphone specific
+build/*
+*.pbxuser
+*.mode2v3
+*.mode1v3
+*.perspective
+*.perspectivev3
+*~.nib
 
-*.exe
+# akka specific
+logs/*
+
+# sbt specific
+target/
+project/boot
+lib_managed/*
+project/build/target
+project/build/lib_managed
+project/build/src_managed
+project/plugins/lib_managed
+project/plugins/target
+project/plugins/src_managed
+project/plugins/project
+
+core/lib_managed
+core/target
+pubsub/lib_managed
+pubsub/target
+
+# eclipse specific
+.metadata
+jrebel.lic
+.settings
+.classpath
+.project
+
+.ensime*
+*.sublime-*
+.cache
+
+# intellij
+*.eml
+*.iml
+*.ipr
+*.iws
+.*.sw?
+.idea
+
+# paulp script
+/.lib/
