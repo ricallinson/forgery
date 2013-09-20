@@ -9,10 +9,11 @@
 package forgery
 
 import(
-    "fmt"
     "strings"
     "github.com/ricallinson/stackr"
 )
+
+var halt = "HALT: Not implemented yet!"
 
 type Server struct {
 
@@ -116,7 +117,7 @@ func (this *Server) Disabled(n string) (bool) {
     Not supported.
 */
 func (this *Server) Configure(n string, fn func()) {
-    panic(fmt.Sprint("ERROR: app.Configure() is not supported"))
+    panic("ERROR: app.Configure() is not supported")
 }
 
 /*
@@ -141,7 +142,7 @@ func (this *Server) Param(p string, fn func(*Request, *Response, func())) {
     This is the app-level variant of "res.render()", and otherwise behaves the same way.
 */
 func (this *Server) Render(v string, opt interface{}, fn func()) {
-    panic(fmt.Sprint("HALT: Not implemented yet!"))
+    panic(halt)
 }
 
 /*
