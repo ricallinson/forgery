@@ -13,7 +13,7 @@ type Server struct {
     // This is useful for providing helper functions to templates, as well as app-level data.
     Locals map[string]string
 
-    // 
+    // Holds the route mappings this application will respond to.
     Routes map[string]string
 }
 
