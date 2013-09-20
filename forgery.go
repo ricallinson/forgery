@@ -21,8 +21,11 @@ type Server struct {
     // This is useful for providing helper functions to templates, as well as app-level data.
     Locals map[string]string
 
-    // Holds the route mappings this application will respond to.
-    Routes map[string]string
+    // The Router middleware function.
+    Router *Router
+
+    // Has the Router been added to stackr.
+    usedRouter bool
 }
 
 /*
@@ -32,7 +35,7 @@ func CreateServer() (*Server) {
     return &Server{
         Server: &stackr.Server{},
         Locals: map[string]string{},
-        Routes: map[string]string{},
+        Router: &Router{},
     }
 }
 
@@ -149,6 +152,21 @@ func (this *Server) All(path string, fn ...func(*Request, *Response, func())) {
     pre-conditions on a route then pass control to subsequent routes when there is no reason to 
     proceed with the route matched.
 */
-func (this *Server) Verb(verb string, path string, fn ...func(*Request, *Response, func())) {
+func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Response, func())) {
 
+    if this.usedRouter == false {
+        this.Use("/", this.Router.Middleware())
+        this.usedRouter = true
+    }
+
+    /*
+        This is temporary code in place of a real URL router.
+        Note: This DOES NOT honor the HTTP verb.
+    */
+
+    this.Use(path, func(req *stackr.Request, res *stackr.Response, next func()) {
+        for _, fn := range funcs {
+            fn(createRequest(req), createResponse(res), next)
+        }
+    })
 }
