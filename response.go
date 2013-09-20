@@ -25,3 +25,10 @@ func createResponse(res *stackr.Response) (*Response) {
 
     return &Response{res}
 }
+
+/*
+    ...
+*/
+func (this *Response) Send() {
+
+}
