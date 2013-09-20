@@ -1,7 +1,7 @@
 package forgery
 
 import(
-    "strings"
+    "fmt"
     "github.com/ricallinson/stackr"
 )
 
@@ -63,6 +63,7 @@ func createResponse(res *stackr.Response) (*Response) {
     Chainable alias of stackr's "res.StatusCode=".
 */
 func (this *Response) Status(c int) (*Response) {
+    this.StatusCode = c
     return this
 }
 
@@ -70,20 +71,21 @@ func (this *Response) Status(c int) (*Response) {
     Set header "field" to "value".
 */
 func (this *Response) Set(f string, v string) {
-
-    /*
-        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
-        Message headers are case-insensitive.
-    */
-
-    this.SetHeader(strings.ToLower(f), v)
+    this.SetHeader(f, v)
 }
 
 /*
     Get the case-insensitive response header "field".
 */
 func (this *Response) Get(f string) (string) {
-    return this.Writer.Header().Get(strings.ToLower(f))
+
+    /*
+        Possible future bug.
+        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+        Message headers are case-insensitive.
+    */
+
+    return this.Writer.Header().Get(f)
 }
 
 /*
@@ -91,28 +93,28 @@ func (this *Response) Get(f string) (string) {
     converted to JSON. The "path" option defaults to "/".
 */
 func (this *Response) Cookie(n string, v string, opt ...interface{}) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Clear cookie "name". The "path" option defaults to "/".
 */
 func (this *Response) ClearCookie(n string, opt ...interface{}) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Redirect to the given "url" with optional "status" code defaulting to 302 "Found".
 */
 func (this *Response) Redirect(url string, s ...int) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Set the location header.
 */
 func (this *Response) Location(url string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -128,7 +130,7 @@ func (this *Response) Location(url string) {
     res.Send(200);
 */
 func (this *Response) Send(b interface{}, s ...int) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -141,7 +143,7 @@ func (this *Response) Send(b interface{}, s ...int) {
     res.Json(interface{ error: 'message' }, 500)
 */
 func (this *Response) Json(b interface{}, s ...int) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -149,7 +151,7 @@ func (this *Response) Json(b interface{}, s ...int) {
     This method is identical to "res.Json()" however opts-in to JSONP callback support.
 */
 func (this *Response) Jsonp(b interface{}, s ...int) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -157,7 +159,7 @@ func (this *Response) Jsonp(b interface{}, s ...int) {
     Content-Type is simply set to this literal value.
 */
 func (this *Response) Type(t string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -167,7 +169,7 @@ func (this *Response) Type(t string) {
     the server responds with 406 "Not Acceptable", or invokes the "default" callback.
 */
 func (this *Response) Format(i interface{}) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -183,7 +185,7 @@ func (this *Response) Format(i interface{}) {
     // Content-Type: image/png
 */
 func (this *Response) Attachment(f ...string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -191,7 +193,7 @@ func (this *Response) Attachment(f ...string) {
     header field based on the filename's extension.
 */
 func (this *Response) Sendfile(p string, opt ...interface{}) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -200,19 +202,19 @@ func (this *Response) Sendfile(p string, opt ...interface{}) {
     dialog is set to path by default, however you may provide an override filename.
 */
 func (this *Response) Download(p string, opt ...interface{}) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Join the given "links" to populate the "Link" response header field.
 */
 func (this *Response) Links(l []string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Render a "view". When an error occurs next(err) is invoked internally.
 */
 func (this *Response) Render(v string, l ...interface{}) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }

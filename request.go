@@ -1,6 +1,7 @@
 package forgery
 
 import(
+    "fmt"
     "github.com/ricallinson/stackr"
 )
 
@@ -88,6 +89,9 @@ type Request struct {
 
     // Return an slice of Accepted charsets ordered from highest quality to lowest.
     AcceptedCharsets []string
+
+    // Holds custom values set by functions in the request flow.
+    Map map[string]interface{}
 }
 
 /*
@@ -126,14 +130,14 @@ func createRequest(req *stackr.Request) (*Request) {
     unless you truly accept input from each object.
 */
 func (this *Request) Param(n string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Get the case-insensitive request header field. The Referrer and Referer fields are interchangeable.
 */
 func (this *Request) Get(f string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
@@ -141,26 +145,26 @@ func (this *Request) Get(f string) {
     otherwise undefined - in which case you should respond with 406 "Not Acceptable".
 */
 func (this *Request) Accepts(t string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Check if the incoming request contains the "Content-Type" header field, and it matches the give mime "type".
 */
 func (this *Request) Is(t string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Check if the given "charset" is acceptable.
 */
 func (this *Request) AcceptsCharset(c string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
 
 /*
     Check if the given "lang" is acceptable.
 */
 func (this *Request) AcceptsLanguage(l string) {
-
+    panic(fmt.Sprint("HALT: Not implemented yet!"))
 }
