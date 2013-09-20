@@ -52,10 +52,27 @@ func (this *Server) Set(n string, v ...string) (string) {
 
 /*
     Get setting "name" value.
+    or;
+    Provides the routing functionality for GET requests to the given "path".
 */
-// func (this *Server) Get(n string) {
+func (this *Server) Get(path string, fn ...func(*Request, *Response, func())) (string) {
 
-// }
+    /*
+        If there is no function then this is really a call to .Set()
+    */
+
+    if len(fn) == 0 {
+        return this.Set(path)
+    }
+
+    /*
+        Otherwise it's a call to .Verb()
+    */
+
+    this.Verb("GET", path, fn...);
+
+    return ""
+}
 
 /*
     Set setting "name" to "true".
@@ -134,111 +151,4 @@ func (this *Server) All(path string, fn ...func(*Request, *Response, func())) {
 */
 func (this *Server) Verb(verb string, path string, fn ...func(*Request, *Response, func())) {
 
-}
-
-func (this *Server) Get(path string, fn ...func(*Request, *Response, func())) (string) {
-
-    /*
-        If there is no function then this is really a call to .Set()
-    */
-
-    if len(fn) == 0 {
-        return this.Set(path)
-    }
-
-    /*
-        Otherwise it's a call to .Verb()
-    */
-
-    this.Verb("GET", path, fn...);
-
-    return ""
-}
-
-func (this *Server) Post(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("POST", path, fn...);
-}
-
-func (this *Server) Put(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("PUT", path, fn...);
-}
-
-func (this *Server) Head(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("HEAD", path, fn...);
-}
-
-func (this *Server) Delete(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("DELETE", path, fn...);
-}
-
-func (this *Server) Options(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("OPTIONS", path, fn...);
-}
-
-func (this *Server) Trace(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("TRACE", path, fn...);
-}
-
-func (this *Server) Copy(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("COPY", path, fn...);
-}
-
-func (this *Server) Lock(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("LOCK", path, fn...);
-}
-
-func (this *Server) Mkcol(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("MKCOL", path, fn...);
-}
-
-func (this *Server) Move(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("MOVE", path, fn...);
-}
-
-func (this *Server) Propfind(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("PROPFIND", path, fn...);
-}
-
-func (this *Server) Proppatch(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("PROPPATCH", path, fn...);
-}
-
-func (this *Server) Unlock(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("UNLOCK", path, fn...);
-}
-
-func (this *Server) Report(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("REPORT", path, fn...);
-}
-
-func (this *Server) Mkactivity(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("MKACTIVITY", path, fn...);
-}
-
-func (this *Server) Checkout(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("CHECKOUT", path, fn...);
-}
-
-func (this *Server) Merge(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("MERGE", path, fn...);
-}
-
-func (this *Server) Msearch(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("M-SEARCH", path, fn...);
-}
-
-func (this *Server) Notify(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("NOTIFY", path, fn...);
-}
-
-func (this *Server) Subscribe(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("SUBSCRIBE", path, fn...);
-}
-
-func (this *Server) Unsubscribe(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("UNSUBSCRIBE", path, fn...);
-}
-
-func (this *Server) Patch(path string, fn ...func(*Request, *Response, func())) {
-    this.Verb("PATCH", path, fn...);
 }
