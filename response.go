@@ -1,6 +1,7 @@
 package forgery
 
 import(
+    "strings"
     "github.com/ricallinson/stackr"
 )
 
@@ -17,8 +18,8 @@ type Response struct {
 
     // Response local variables are scoped to the request, thus only available 
     // to the view(s) rendered during that request / response cycle, if any. 
-    // Otherwise this API is identical to app.locals.
-    Locals string
+    // Otherwise this API is identical to app.Locals.
+    Locals map[string]string
 }
 
 /*
@@ -40,6 +41,18 @@ func createResponse(res *stackr.Response) (*Response) {
     r.Response = res
 
     /*
+        Set default charset.
+    */
+
+    r.Charset = "utf-8"
+
+    /*
+        Prime the Locals map.
+    */
+
+    r.Locals = map[string]string{}
+
+    /*
         Return the finished forgery.Response.
     */
 
@@ -58,13 +71,19 @@ func (this *Response) Status(c int) (*Response) {
 */
 func (this *Response) Set(f string, v string) {
 
+    /*
+        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+        Message headers are case-insensitive.
+    */
+
+    this.SetHeader(strings.ToLower(f), v)
 }
 
 /*
     Get the case-insensitive response header "field".
 */
-func (this *Response) Get(f string) {
-
+func (this *Response) Get(f string) (string) {
+    return this.Writer.Header().Get(strings.ToLower(f))
 }
 
 /*
@@ -195,5 +214,5 @@ func (this *Response) Links(l []string) {
     Render a "view". When an error occurs next(err) is invoked internally.
 */
 func (this *Response) Render(v string, l ...interface{}) {
-    
+
 }

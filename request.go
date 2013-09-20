@@ -88,8 +88,6 @@ type Request struct {
 
     // Return an slice of Accepted charsets ordered from highest quality to lowest.
     AcceptedCharsets []string
-
-
 }
 
 /*
