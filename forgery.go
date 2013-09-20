@@ -9,6 +9,7 @@
 package forgery
 
 import(
+    "strings"
     "github.com/ricallinson/stackr"
 )
 
@@ -159,12 +160,18 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
         this.usedRouter = true
     }
 
+    verb = strings.ToUpper(verb)
+
     /*
         This is temporary code in place of a real URL router.
-        Note: This DOES NOT honor the HTTP verb.
     */
 
     this.Use(path, func(req *stackr.Request, res *stackr.Response, next func()) {
+
+        if strings.ToUpper(req.Method) != verb {
+            return
+        }
+
         for _, fn := range funcs {
             fn(createRequest(req), createResponse(res), next)
         }
