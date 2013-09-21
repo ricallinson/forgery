@@ -1,6 +1,7 @@
 package forgery
 
 import(
+    "strings"
     "github.com/ricallinson/stackr"
 )
 
@@ -12,28 +13,28 @@ type Request struct {
     // The stackr.Request type.
     *stackr.Request
 
-    // This property is an slice containing properties mapped to the named route "parameters". 
+    // This property is a slice containing properties mapped to the named route "parameters". 
     // For example if you have the route "/user/:name", then the "name" property is available 
     // to you as req.params["name"]. This object defaults to {}.
     Params map[string]string
 
-    // This property is an object containing the parsed query-string, defaulting to {}.
-    Query map[string]string
-
-    // This property is an object containing the parsed request body. 
+    // This property is a map containing the parsed request body. 
     // This feature is provided by the bodyParser() middleware, though other body 
     // parsing middleware may follow this convention as well.
     // This property defaults to {} when bodyParser() is used.
     Body map[string]string
 
-    // This property is an object of the files uploaded. This feature is provided 
+    // This property is a map containing the parsed query-string, defaulting to {}.
+    Query map[string]string
+
+    // This property is a map of the files uploaded. This feature is provided 
     // by the bodyParser() middleware, though other body parsing middleware may 
     // follow this convention as well. This property defaults to {} when bodyParser() is used.
-    Files map[string]string
+    Files map[string]interface{}
 
     // The currently matched Route containing several properties such as the 
     // route's original path string, the regexp generated, and so on.
-    Route string
+    Route interface{}
 
     // When the cookieParser() middleware is used this object defaults to {}, 
     // otherwise contains the cookies sent by the user-agent.
@@ -60,9 +61,6 @@ type Request struct {
 
     // Returns the request URL pathname.
     Path string
-
-    // Returns the hostname from the "Host" header field (void of portno).
-    Host string
 
     // Check if the request is fresh - aka Last-Modified and/or the ETag still match, 
     // indicating that the resource is "fresh".
@@ -99,23 +97,54 @@ type Request struct {
 
 func createRequest(req *stackr.Request) (*Request) {
 
-    /*
-        Create the Request.
-    */
+    this := &Request{}
 
-    r := &Request{}
+    this.Request = req
 
-    /*
-        Set the stackr.Request.
-    */
+    if this.Params == nil {
+        this.Params = map[string]string{}
+    }
 
-    r.Request = req
+    if this.Body == nil {
+        this.Body = map[string]string{}
+    }
+
+    if this.Query == nil {
+        this.Query = map[string]string{}
+    }
+
+    if this.Files == nil {
+        this.Files = map[string]interface{}{}
+    }
+
+    if this.Cookies == nil {
+        this.Cookies = map[string]string{}
+    }
+
+    if this.SignedCookies == nil {
+        this.SignedCookies = map[string]string{}
+    }
+
+    this.Ip = this.RemoteAddr
+    // this.Ips
+    this.Path = this.URL.Path
+    // this.Fresh
+    // this.Stale
+    // this.Xhr
+    this.Protocol = this.URL.Scheme
+    this.Secure = this.Protocol == "https"
+    // this.AcceptedLanguages
+    // this.AcceptedCharsets
+
+    if this.Map == nil {
+        this.Map = map[string]interface{}{}
+    }
 
     /*
         Return the finished forgery.Request.
     */
 
-    return r
+    return this
 }
 
 /*
@@ -128,15 +157,36 @@ func createRequest(req *stackr.Request) (*Request) {
     Direct access to req.body, req.params, and req.query should be favoured for clarity - 
     unless you truly accept input from each object.
 */
-func (this *Request) Param(n string) {
-    panic(halt)
+func (this *Request) Param(n string) (string) {
+    var v string
+    var ok bool
+    v, ok = this.Params[n]
+    if ok {
+        return v
+    }
+    v, ok = this.Body[n]
+    if ok {
+        return v
+    }
+    v, ok = this.Query[n]
+    if ok {
+        return v
+    }
+    return ""
 }
 
 /*
     Get the case-insensitive request header field. The Referrer and Referer fields are interchangeable.
 */
-func (this *Request) Get(f string) {
-    panic(halt)
+func (this *Request) Get(f string) (string) {
+
+    /*
+        Possible future bug.
+        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+        Message headers are case-insensitive.
+    */
+
+    return this.Header.Get(f)
 }
 
 /*
@@ -150,8 +200,9 @@ func (this *Request) Accepts(t string) {
 /*
     Check if the incoming request contains the "Content-Type" header field, and it matches the give mime "type".
 */
-func (this *Request) Is(t string) {
-    panic(halt)
+func (this *Request) Is(t string) (bool) {
+    h := this.Get("content-type")
+    return strings.ToLower(h) == strings.ToLower(t)
 }
 
 /*
