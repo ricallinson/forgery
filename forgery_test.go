@@ -1,4 +1,4 @@
-package forgery
+package f
 
 import(
     "testing"

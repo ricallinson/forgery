@@ -6,7 +6,7 @@
 
     Note: This project started out as a clone of the superb Node.js library [Express](http://expressjs.com/).
 */
-package forgery
+package f
 
 import(
     "strings"
