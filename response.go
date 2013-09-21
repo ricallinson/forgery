@@ -173,7 +173,7 @@ func (this *Response) Format(i interface{}) {
 
 /*
     Sets the Content-Disposition header field to "attachment". If a filename is given then 
-    the Content-Type will be automatically set based on the extname via res.type(), 
+    the Content-Type will be automatically set based on the extname via res.Type(), 
     and the Content-Disposition's "filename=" parameter will be set.
 
     res.Attachment();
@@ -197,7 +197,7 @@ func (this *Response) Sendfile(p string, opt ...interface{}) {
 
 /*
     Transfer the file at path as an "attachment", typically browsers will prompt the user for download. 
-    The Content-Disposition "filename=" parameter, aka the one that will appear in the brower 
+    The Content-Disposition "filename=" parameter, aka the one that will appear in the browser 
     dialog is set to path by default, however you may provide an override filename.
 */
 func (this *Response) Download(p string, opt ...interface{}) {
