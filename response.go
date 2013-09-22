@@ -3,6 +3,7 @@ package f
 import(
     "fmt"
     "strings"
+    "encoding/json"
     "github.com/ricallinson/stackr"
 )
 
@@ -132,17 +133,18 @@ func (this *Response) Location(url string) {
     responses such as automatically assigning the Content-Length unless previously defined 
     and providing automatic HEAD and HTTP cache freshness support.
 
-    res.Send(new Buffer('whoop'));
-    res.Send(interface{ "some": "json" });
-    res.Send('some html');
-    res.Send('Sorry, we cannot find that!', 404);
-    res.Send(interface{ "error": 'something blew up' }, 500);
+    res.Send(new Buffer("whoop"));
+    res.Send(map[string]string{"some": "json"});
+    res.Send("some html");
+    res.Send("Sorry, we cannot find that!", 404);
+    res.Send(map[string]string{"error": "msg"}, 500);
     res.Send(200);
 */
 func (this *Response) Send(b interface{}, s ...int) {
 
+    req := this.request
     body := ""
-    isHead := this.request.Method == "HEAD"
+    isHead := req.Method == "HEAD"
 
     // If we were given a status, us it.
     if len(s) == 1 {
@@ -162,9 +164,9 @@ func (this *Response) Send(b interface{}, s ...int) {
     case string:
         if len(this.Get("content-type")) == 0 {
             this.ContentType("text/html")
-            if len(this.Charset) == 0 {
-                this.Charset = "utf-8"
-            }
+        }
+        if len(this.Charset) == 0 {
+            this.Charset = "utf-8"
         }
         body = b.(string)
     // case buffer:
@@ -177,12 +179,12 @@ func (this *Response) Send(b interface{}, s ...int) {
 
     // ETag support
 
-    // freshness
-    if this.request.Fresh {
+    // Freshness
+    if req.Fresh {
         this.StatusCode = 304;
     }
 
-    // strip irrelevant headers
+    // Strip irrelevant headers
     if this.StatusCode == 204 || this.StatusCode == 304 {
         this.RemoveHeader("Content-Type");
         this.RemoveHeader("Content-Length");
@@ -198,24 +200,64 @@ func (this *Response) Send(b interface{}, s ...int) {
 }
 
 /*
+    Given an interface return JSON string.
+*/
+func (this *Response) json(i interface{}) (string) {
+    if len(this.Get("content-type")) == 0 {
+        this.ContentType("application/json")
+    }
+    if len(this.Charset) == 0 {
+        this.Charset = "utf-8"
+    }
+    b, err := json.Marshal(i)
+    if err != nil {
+        return ""
+    }
+    return string(b)
+}
+
+/*
     Send a JSON response. This method is identical to res.Send() when an object or slice is passed, 
     however it may be used for explicit JSON conversion of non-objects 
     (null, undefined, etc), though these are technically not valid JSON.
 
     res.Json(null)
-    res.Json({ "user": 'tobi' })
-    res.Json(interface{ error: 'message' }, 500)
+    res.Json(map[string]string{"user": "ric"})
+    res.Json(map[string]string{"error": "msg"}, 500)
 */
-func (this *Response) Json(b interface{}, s ...int) {
-    panic(halt)
+func (this *Response) Json(i interface{}, s ...int) {
+
+    // If we were given a status, us it.
+    if len(s) == 1 {
+        this.StatusCode = s[0]
+    }
+
+    body := this.json(i)
+
+    this.Send(body)
 }
 
 /*
     Send a JSON response with JSONP support.
     This method is identical to "res.Json()" however opts-in to JSONP callback support.
 */
-func (this *Response) Jsonp(b interface{}, s ...int) {
-    panic(halt)
+func (this *Response) Jsonp(i interface{}, s ...int) {
+
+    req := this.request
+
+    // If we were given a status, us it.
+    if len(s) == 1 {
+        this.StatusCode = s[0]
+    }
+
+    body := this.json(i)
+
+    if cb, ok := req.Query["jsonp"]; ok {
+        this.ContentType("text/javascript");
+        body = cb + " && " + cb + "(" + body + ");";
+    }
+
+    this.Send(body)
 }
 
 /*
