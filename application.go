@@ -9,6 +9,7 @@
 package f
 
 import(
+    "os"
     "strings"
     "github.com/ricallinson/stackr"
 )
@@ -41,12 +42,57 @@ type Server struct {
     Create a new stackr server.
 */
 func CreateServer() (*Server) {
-    return &Server{
+    this := &Server{
         Server: &stackr.Server{},
         Locals: map[string]string{},
         Router: &Router{},
         settings: map[string]string{},
         engines: map[string]func(){},
+    }
+    this.defaultConfiguration()
+    return this
+}
+
+/*
+    Initialize application configuration.
+*/
+func (this *Server) defaultConfiguration() {
+
+    // default settings
+    this.Enable("x-powered-by");
+    this.Enable("etag");
+    this.Set("env", os.Getenv("GO_ENV"))
+    if this.Get("env") == "" {
+        this.Set("env", "development"); 
+    }
+    this.Set("subdomain offset", "2");
+    // debug("booting in %s mode", this.get("env"));
+
+    // implicit middleware
+    // this.Use(connect.query());
+    // this.Use(middleware.init(this));
+
+    // router
+    this.Enabled("case sensitive routing");
+    this.Enabled("strict routing");
+
+    // setup locals
+    // this.locals = locals(this);
+
+    // default locals
+    // this.locals.settings = this.settings;
+
+    // default configuration
+    // this.Set("view", View);
+    // this.Set("views", process.cwd() + "/views");
+    this.Set("jsonp callback name", "callback");
+
+    if this.Get("env") == "development" {
+        this.Set("json spaces", "2");
+    }
+
+    if this.Get("env") == "production" {
+        this.Enable("view cache");
     }
 }
 
@@ -54,7 +100,7 @@ func CreateServer() (*Server) {
     Assigns setting "name" to "value".
 */
 func (this *Server) Set(n string, v ...string) (string) {
-    if len(v) == 1 {
+    if len(v) == 0 {
         return this.settings[n]
     }
     this.settings[n] = v[0]
