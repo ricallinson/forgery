@@ -182,7 +182,8 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
         }
 
         for _, fn := range funcs {
-            fn(createRequest(req), createResponse(res), next)
+            r := createRequest(req)
+            fn(r, createResponse(r, res), next)
         }
     })
 }

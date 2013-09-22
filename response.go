@@ -1,6 +1,8 @@
 package f
 
 import(
+    "fmt"
+    "strings"
     "github.com/ricallinson/stackr"
 )
 
@@ -19,43 +21,52 @@ type Response struct {
     // to the view(s) rendered during that request / response cycle, if any. 
     // Otherwise this API is identical to app.Locals.
     Locals map[string]string
+
+    // The Request object.
+    request *Request
 }
 
 /*
     Returns a new HTTP Response.
 */
 
-func createResponse(res *stackr.Response) (*Response) {
+func createResponse(req *Request, res *stackr.Response) (*Response) {
 
     /*
         Create the Response.
     */
 
-    r := &Response{}
+    this := &Response{}
 
     /*
         Set the stackr.Response.
     */
 
-    r.Response = res
+    this.Response = res
+
+    /*
+        Set the stackr.Request (this is private).
+    */
+
+    this.request = req
 
     /*
         Set default charset.
     */
 
-    r.Charset = "utf-8"
+    this.Charset = "utf-8"
 
     /*
         Prime the Locals map.
     */
 
-    r.Locals = map[string]string{}
+    this.Locals = map[string]string{}
 
     /*
         Return the finished forgery.Response.
     */
 
-    return r
+    return this
 }
 
 /*
@@ -129,7 +140,61 @@ func (this *Response) Location(url string) {
     res.Send(200);
 */
 func (this *Response) Send(b interface{}, s ...int) {
-    panic(halt)
+
+    body := ""
+    isHead := this.request.Method == "HEAD"
+
+    // If we were given a status, us it.
+    if len(s) == 1 {
+        this.StatusCode = s[0]
+    }
+
+    switch b.(type) {
+    default: // JSON
+        this.Json(b, s...)
+        return
+    case int: // Status Code
+        if len(this.Get("content-type")) == 0 {
+            this.ContentType("text/plain")
+        }
+        this.StatusCode = b.(int)
+        body = StatusCodes[b.(int)]
+    case string:
+        if len(this.Get("content-type")) == 0 {
+            this.ContentType("text/html")
+            if len(this.Charset) == 0 {
+                this.Charset = "utf-8"
+            }
+        }
+        body = b.(string)
+    // case buffer:
+    }
+
+    // Populate Content-Length
+    if len(this.Get("content-length")) == 0 {
+        this.Set("Content-Length", fmt.Sprint(len(body))) // or buffer size
+    }
+
+    // ETag support
+
+    // freshness
+    if this.request.Fresh {
+        this.StatusCode = 304;
+    }
+
+    // strip irrelevant headers
+    if this.StatusCode == 204 || this.StatusCode == 304 {
+        this.RemoveHeader("Content-Type");
+        this.RemoveHeader("Content-Length");
+        this.RemoveHeader("Transfer-Encoding");
+        body = "";
+    }
+
+    if isHead {
+        this.End("")
+    } else {
+        this.End(body)
+    }
 }
 
 /*
@@ -216,4 +281,27 @@ func (this *Response) Links(l []string) {
 */
 func (this *Response) Render(v string, l ...interface{}) {
     panic(halt)
+}
+
+/**
+    Set _Content-Type_ response header with `type` through `mime.lookup()`
+    when it does not contain "/", or set the Content-Type to `type` otherwise.
+
+    Examples:
+
+         res.type('.html');
+         res.type('html');
+         res.type('json');
+         res.type('application/json');
+         res.type('png');
+*/
+
+func (this *Response) ContentType(t string) {
+    if strings.Index(t, "/") > 0 {
+        this.Set("content-type", t)
+        return
+    }
+    // Lookup mime type
+    this.Set("content-type", "text/plain")
+    return 
 }
