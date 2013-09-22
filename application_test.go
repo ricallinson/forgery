@@ -1,6 +1,7 @@
 package f
 
 import(
+    // "fmt"
     "testing"
     . "github.com/ricallinson/simplebdd"
 )
@@ -14,6 +15,7 @@ func TestStack(t *testing.T) {
                 settings: map[string]string{},
             }
             s.defaultConfiguration()
+            // fmt.Println(s.Get("views"))
         })
     })
 }

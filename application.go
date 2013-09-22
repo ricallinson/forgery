@@ -11,6 +11,7 @@ package f
 import(
     "os"
     "strings"
+    "path/filepath"
     "github.com/ricallinson/stackr"
 )
 
@@ -40,6 +41,17 @@ type Server struct {
 
 /*
     Create a new stackr server.
+
+    * "env" Environment mode, defaults to $GO_ENV or "development"
+    * "trust proxy" Enables reverse proxy support, disabled by default
+    * "jsonp callback name" Changes the default callback name of "?callback="
+    * "json replacer" JSON replacer callback, null by default
+    * "json spaces" JSON response spaces for formatting, defaults to 2 in development, 0 in production
+    * "case sensitive routing" Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as the same
+    * "strict routing" Enable strict routing, by default "/foo" and "/foo/" are treated the same by the router
+    * "view cache" Enables view template compilation caching, enabled in production by default
+    * "view engine" The default engine extension to use when omitted
+    * "views" The view directory path, defaulting to "./views"
 */
 func CreateServer() (*Server) {
     this := &Server{
@@ -57,6 +69,12 @@ func CreateServer() (*Server) {
     Initialize application configuration.
 */
 func (this *Server) defaultConfiguration() {
+
+    cwd, err := os.Getwd()
+
+    if err != nil {
+        panic("Cannot get current working directory!")
+    }
 
     // default settings
     this.Enable("x-powered-by");
@@ -84,7 +102,7 @@ func (this *Server) defaultConfiguration() {
 
     // default configuration
     // this.Set("view", View);
-    // this.Set("views", process.cwd() + "/views");
+    this.Set("views", filepath.Join(cwd, "views"));
     this.Set("jsonp callback name", "callback");
 
     if this.Get("env") == "development" {
