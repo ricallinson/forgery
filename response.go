@@ -156,13 +156,13 @@ func (this *Response) Send(b interface{}, s ...int) {
         this.Json(b, s...)
         return
     case int: // Status Code
-        if len(this.Get("content-type")) == 0 {
+        if len(this.Get("Content-Type")) == 0 {
             this.ContentType("text/plain")
         }
         this.StatusCode = b.(int)
         body = StatusCodes[b.(int)]
     case string:
-        if len(this.Get("content-type")) == 0 {
+        if len(this.Get("Content-Type")) == 0 {
             this.ContentType("text/html")
         }
         if len(this.Charset) == 0 {
@@ -173,7 +173,7 @@ func (this *Response) Send(b interface{}, s ...int) {
     }
 
     // Populate Content-Length
-    if len(this.Get("content-length")) == 0 {
+    if len(this.Get("Content-Length")) == 0 {
         this.Set("Content-Length", fmt.Sprint(len(body))) // or buffer size
     }
 
@@ -203,7 +203,7 @@ func (this *Response) Send(b interface{}, s ...int) {
     Given an interface return JSON string.
 */
 func (this *Response) json(i interface{}) (string) {
-    if len(this.Get("content-type")) == 0 {
+    if len(this.Get("Content-Type")) == 0 {
         this.ContentType("application/json")
     }
     if len(this.Charset) == 0 {
@@ -258,14 +258,6 @@ func (this *Response) Jsonp(i interface{}, s ...int) {
     }
 
     this.Send(body)
-}
-
-/*
-    Sets the Content-Type to the mime lookup of type, or when "/" is present the 
-    Content-Type is simply set to this literal value.
-*/
-func (this *Response) Type(t string) {
-    panic(halt)
 }
 
 /*
@@ -325,9 +317,9 @@ func (this *Response) Render(v string, l ...interface{}) {
     panic(halt)
 }
 
-/**
-    Set _Content-Type_ response header with `type` through `mime.lookup()`
-    when it does not contain "/", or set the Content-Type to `type` otherwise.
+/*
+    Sets the Content-Type to the mime lookup of type, or when "/" is present the 
+    Content-Type is simply set to this literal value.
 
     Examples:
 
@@ -337,13 +329,11 @@ func (this *Response) Render(v string, l ...interface{}) {
          res.type('application/json');
          res.type('png');
 */
-
 func (this *Response) ContentType(t string) {
     if strings.Index(t, "/") > 0 {
-        this.Set("content-type", t)
+        this.Set("Content-Type", t)
         return
     }
     // Lookup mime type
-    this.Set("content-type", "text/plain")
-    return 
+    panic(halt)
 }
