@@ -69,7 +69,7 @@ func TestStack(t *testing.T) {
 
     Describe("Enabled()", func() {
 
-        It("should return [true]", func() {
+        It("should return [true & false]", func() {
             s := CreateServer()
             s.Enable("foo")
             AssertEqual(s.Enabled("foo"), true)
@@ -79,7 +79,7 @@ func TestStack(t *testing.T) {
 
     Describe("Disabled()", func() {
 
-        It("should return [false]", func() {
+        It("should return [true & false]", func() {
             s := CreateServer()
             s.Disable("foo")
             AssertEqual(s.Disabled("foo"), true)
@@ -89,7 +89,7 @@ func TestStack(t *testing.T) {
 
     Describe("Engine()", func() {
 
-        It("should return [func]", func() {
+        It("should return [true]", func() {
             s := CreateServer()
             s.Engine(".html", func(){})
             _, ok := s.engines[".html"]
@@ -99,12 +99,28 @@ func TestStack(t *testing.T) {
 
     Describe("Param()", func() {
 
-        It("should return [func]", func() {
+        It("should return [true]", func() {
             s := CreateServer()
             s.Router.Middleware()
             s.Param(":user", func(req *Request, res *Response, next func()){})
             _, ok := s.Router.Params[":user"]
             AssertEqual(ok, true)
+        })
+    })
+
+    Describe("Render()", func() {
+
+        It("should return [skipped]", func() {
+            AssertEqual(true, true)
+        })
+    })
+
+    Describe("All()", func() {
+
+        It("should return [skipped]", func() {
+            s := CreateServer()
+            s.All("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
         })
     })
 
