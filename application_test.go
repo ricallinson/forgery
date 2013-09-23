@@ -117,9 +117,18 @@ func TestStack(t *testing.T) {
 
     Describe("All()", func() {
 
-        It("should return [skipped]", func() {
+        It("should return [true]", func() {
             s := CreateServer()
             s.All("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+    })
+
+    Describe("Get()", func() {
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Get("/path", func(req *Request, res *Response, next func()){})
             AssertEqual(true, true)
         })
     })

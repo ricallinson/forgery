@@ -15,6 +15,12 @@ type Response struct {
     // The stackr.Response.
     *stackr.Response
 
+    // The Request object.
+    req *Request
+
+    // The application server.
+    app *Server
+
     // Assign the charset. Defaults to "utf-8".
     Charset string
 
@@ -22,50 +28,25 @@ type Response struct {
     // to the view(s) rendered during that request / response cycle, if any. 
     // Otherwise this API is identical to app.Locals.
     Locals map[string]string
-
-    // The Request object.
-    request *Request
 }
 
 /*
     Returns a new HTTP Response.
 */
 
-func createResponse(req *Request, res *stackr.Response) (*Response) {
-
-    /*
-        Create the Response.
-    */
+func createResponse(req *Request, res *stackr.Response, app *Server) (*Response) {
 
     this := &Response{}
 
-    /*
-        Set the stackr.Response.
-    */
-
     this.Response = res
 
-    /*
-        Set the stackr.Request (this is private).
-    */
+    this.req = req
 
-    this.request = req
-
-    /*
-        Set default charset.
-    */
+    this.app = app
 
     this.Charset = "utf-8"
 
-    /*
-        Prime the Locals map.
-    */
-
     this.Locals = map[string]string{}
-
-    /*
-        Return the finished forgery.Response.
-    */
 
     return this
 }
@@ -142,7 +123,7 @@ func (this *Response) Location(url string) {
 */
 func (this *Response) Send(b interface{}, s ...int) {
 
-    req := this.request
+    req := this.req
     body := ""
     isHead := req.Method == "HEAD"
 
@@ -243,7 +224,8 @@ func (this *Response) Json(i interface{}, s ...int) {
 */
 func (this *Response) Jsonp(i interface{}, s ...int) {
 
-    req := this.request
+    req := this.req
+    app := this.app
 
     // If we were given a status, us it.
     if len(s) == 1 {
@@ -252,7 +234,7 @@ func (this *Response) Jsonp(i interface{}, s ...int) {
 
     body := this.json(i)
 
-    if cb, ok := req.Query["jsonp"]; ok {
+    if cb, ok := req.Query[app.Get("jsonp callback name")]; ok {
         this.ContentType("text/javascript");
         body = cb + " && " + cb + "(" + body + ");";
     }

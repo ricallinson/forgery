@@ -13,6 +13,9 @@ type Request struct {
     // The stackr.Request type.
     *stackr.Request
 
+    // The application server.
+    app *Server
+
     // This property is a slice containing properties mapped to the named route "parameters". 
     // For example if you have the route "/user/:name", then the "name" property is available 
     // to you as req.params["name"]. This object defaults to {}.
@@ -95,11 +98,13 @@ type Request struct {
     Returns a new Request.
 */
 
-func createRequest(req *stackr.Request) (*Request) {
+func createRequest(req *stackr.Request, app *Server) (*Request) {
 
     this := &Request{}
 
     this.Request = req
+
+    this.app = app
 
     if this.Params == nil {
         this.Params = map[string]string{}
