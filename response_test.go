@@ -140,6 +140,17 @@ func TestResponse(t *testing.T) {
             AssertEqual(w, "{\"foo\":\"bar\"}")
         })
 
+        It("should return [200 & text/html & 3 & utf-8 & foo]", func() {
+            res.Charset = ""
+            res.Send(bytes.NewBufferString("foo").Bytes(), 200)
+            w := bytes.NewBuffer(mock.Written).String()
+            AssertEqual(res.Get("Content-Type"), "text/html")
+            AssertEqual(res.Get("Content-Length"), "3")
+            AssertEqual(res.Get("Transfer-Encoding"), "")
+            AssertEqual(res.Charset, "utf-8")
+            AssertEqual(w, "foo")
+        })
+
         It("should return [204 & utf-8]", func() {
             res.Send(204)
             w := bytes.NewBuffer(mock.Written).String()
@@ -202,7 +213,7 @@ func TestResponse(t *testing.T) {
             AssertEqual(w, "")
         })
     })
-    
+
     Describe("json()", func() {
 
         It("should return [{\"foo\":\"bar\"}]", func() {

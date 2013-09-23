@@ -2,6 +2,7 @@ package f
 
 import(
     "fmt"
+    // "bytes"
     "strings"
     "encoding/json"
     "github.com/ricallinson/stackr"
@@ -114,7 +115,7 @@ func (this *Response) Location(url string) {
     responses such as automatically assigning the Content-Length unless previously defined 
     and providing automatic HEAD and HTTP cache freshness support.
 
-    res.Send(new Buffer("whoop"));
+    res.Send([]byte{114, 105, 99}]);
     res.Send(map[string]string{"some": "json"});
     res.Send("some html");
     res.Send("Sorry, we cannot find that!", 404);
@@ -123,8 +124,10 @@ func (this *Response) Location(url string) {
 */
 func (this *Response) Send(b interface{}, s ...int) {
 
+    var body string
+    var bytes []byte
+
     req := this.req
-    body := ""
     isHead := req.Method == "HEAD"
 
     // If we were given a status, us it.
@@ -150,12 +153,23 @@ func (this *Response) Send(b interface{}, s ...int) {
             this.Charset = "utf-8"
         }
         body = b.(string)
-    // case buffer:
+    case []byte:
+        if len(this.Get("Content-Type")) == 0 {
+            this.ContentType("text/html")
+        }
+        if len(this.Charset) == 0 {
+            this.Charset = "utf-8"
+        }
+        bytes = b.([]byte)
     }
 
     // Populate Content-Length
     if len(this.Get("Content-Length")) == 0 {
-        this.Set("Content-Length", fmt.Sprint(len(body))) // or buffer size
+        if len(bytes) > 0 {
+            this.Set("Content-Length", fmt.Sprint(len(bytes)))
+        } else {
+            this.Set("Content-Length", fmt.Sprint(len(body)))
+        }
     }
 
     // ETag support
@@ -174,14 +188,16 @@ func (this *Response) Send(b interface{}, s ...int) {
     }
 
     if isHead {
-        this.End("")
-    } else {
-        this.End(body)
+        body = ""
+    } else if len(bytes) > 0 {
+        this.WriteBytes(bytes)
     }
+
+    this.End(body)
 }
 
 /*
-    Given an interface return JSON string.
+    Given an interface returns a JSON string.
 */
 func (this *Response) json(i interface{}) (string) {
     if len(this.Get("Content-Type")) == 0 {
