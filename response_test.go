@@ -3,15 +3,27 @@ package f
 import(
     // "fmt"
     "testing"
+    "github.com/ricallinson/stackr"
     . "github.com/ricallinson/simplebdd"
 )
 
 func TestResponse(t *testing.T) {
 
-    Describe("_()", func() {
+    var res *Response
 
-        It("should return []", func() {
-            AssertEqual(true, true)
+    BeforeEach(func() {
+        res = createResponse(
+        	&Request{},
+            &stackr.Response{},
+            &Server{},
+        )
+    })
+
+    Describe("Status()", func() {
+
+        It("should return [true]", func() {
+        	res.Status(404)
+            AssertEqual(res.StatusCode, 404)
         })
     })
 

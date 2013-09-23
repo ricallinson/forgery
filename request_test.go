@@ -25,13 +25,6 @@ func TestRequest(t *testing.T) {
         req.Header = map[string][]string{}
     })
 
-    Describe("createRequest()", func() {
-
-        It("should return [true]", func() {
-            AssertEqual(true, true)
-        })
-    })
-
     Describe("Param()", func() {
 
         It("should return [bar]", func() {
