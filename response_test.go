@@ -305,14 +305,29 @@ func TestResponse(t *testing.T) {
 
     Describe("ContentType()", func() {
 
-        It("should return [foo]", func() {
+        It("should return [foo/bar]", func() {
             res.ContentType("foo/bar")
             AssertEqual(res.Get("content-type"), "foo/bar")
         })
 
-        It("should return [foo]", func() {
+        It("should return [foo/bar]", func() {
             res.ContentType("foo/bar")
             AssertEqual(res.Get("Content-Type"), "foo/bar")
+        })
+
+        It("should return [image/png]", func() {
+            res.ContentType(".png")
+            AssertEqual(res.Get("Content-Type"), "image/png")
+        })
+
+        It("should return [text/html; charset=utf-8]", func() {
+            res.ContentType(".html")
+            AssertEqual(res.Get("Content-Type"), "text/html; charset=utf-8")
+        })
+
+        It("should return [image/jpeg]", func() {
+            res.ContentType("jpg")
+            AssertEqual(res.Get("Content-Type"), "image/jpeg")
         })
     })
 

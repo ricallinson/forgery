@@ -2,7 +2,7 @@ package f
 
 import(
     "fmt"
-    // "bytes"
+    "mime"
     "strings"
     "encoding/json"
     "github.com/ricallinson/stackr"
@@ -328,10 +328,11 @@ func (this *Response) Render(v string, l ...interface{}) {
          res.type('png');
 */
 func (this *Response) ContentType(t string) {
-    if strings.Index(t, "/") > 0 {
-        this.Set("Content-Type", t)
-        return
+    if strings.Index(t, "/") == -1 {
+        if strings.Index(t, ".") != 0 {
+            t = "." + t
+        }
+        t = mime.TypeByExtension(t)
     }
-    // Lookup mime type
-    panic(halt)
+    this.Set("Content-Type", t)
 }
