@@ -3,6 +3,7 @@ package f
 import(
     "fmt"
     "mime"
+    "html"
     "strings"
     "path/filepath"
     "encoding/json"
@@ -100,15 +101,45 @@ func (this *Response) ClearCookie(n string, opt ...interface{}) {
 /*
     Redirect to the given "url" with optional "status" code defaulting to 302 "Found".
 */
-func (this *Response) Redirect(url string, s ...int) {
-    panic(halt)
+func (this *Response) Redirect(uri string, s ...int) {
+
+    req := this.req
+    isHead := req.Method == "HEAD"
+
+    this.StatusCode = 302
+
+    // If we were given a status, us it.
+    if len(s) == 1 {
+        this.StatusCode = s[0]
+    }
+
+    this.Location(uri)
+
+    uri = this.Get("Location")
+
+    body := ""
+
+    if this.req.Accepts("text/plain") {
+        body = StatusCodes[this.StatusCode] + ". Redirecting to " + uri;
+    } else if this.req.Accepts("text/html") {
+        u := html.EscapeString(uri)
+        body = "<p>" + StatusCodes[this.StatusCode] + ". Redirecting to <a href=\"" + u + "\">" + u + "</a></p>";
+    }
+
+    this.Set("Content-Length", fmt.Sprint(len(body)))
+
+    if isHead {
+        body = ""
+    }
+
+    this.End(body)
 }
 
 /*
     Set the location header.
 */
-func (this *Response) Location(url string) {
-    panic(halt)
+func (this *Response) Location(uri string) {
+    this.Set("Location", uri)
 }
 
 /*

@@ -74,8 +74,39 @@ func TestResponse(t *testing.T) {
 
     Describe("Redirect()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return []", func() {
+            res.Redirect("http://www.foo.com/")
+            w := bytes.NewBuffer(mock.Written).String()
+            AssertEqual(w, "")
+        })
+
+        It("should return [Moved Temporarily. Redirecting to http://www.foo.com/]", func() {
+            res.req.Accepted = []string{"text/plain"}
+            res.Redirect("http://www.foo.com/")
+            w := bytes.NewBuffer(mock.Written).String()
+            AssertEqual(w, "Moved Temporarily. Redirecting to http://www.foo.com/")
+        })
+
+        It("should return [HTML <p>...]", func() {
+            res.req.Accepted = []string{"text/html"}
+            res.Redirect("http://www.foo.com/")
+            w := bytes.NewBuffer(mock.Written).String()
+            AssertEqual(w, "<p>Moved Temporarily. Redirecting to <a href=\"http://www.foo.com/\">http://www.foo.com/</a></p>")
+        })
+
+        It("should return [Not Found. Redirecting to http://www.foo.com/]", func() {
+            res.req.Accepted = []string{"text/plain"}
+            res.Redirect("http://www.foo.com/", 404)
+            w := bytes.NewBuffer(mock.Written).String()
+            AssertEqual(w, "Not Found. Redirecting to http://www.foo.com/")
+        })
+
+        It("should return [Not Found. Redirecting to http://www.foo.com/]", func() {
+            res.req.Method = "HEAD"
+            res.req.Accepted = []string{"text/plain"}
+            res.Redirect("http://www.foo.com/")
+            w := bytes.NewBuffer(mock.Written).String()
+            AssertEqual(w, "")
         })
     })
 

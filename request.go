@@ -51,14 +51,14 @@ type Request struct {
     // prevents tampering as the secret used to sign is private.
     SignedCookies map[string]string
 
-    // Return an array of Accepted media types ordered from highest quality to lowest.
-    Accepted map[string]string
+    // Return an slice of Accepted media types ordered from highest quality to lowest.
+    Accepted []string
 
     // Return the remote address, or when "trust proxy" is enabled - the upstream address.
     Ip string
 
     // When "trust proxy" is `true`, parse the "X-Forwarded-For" ip address list and return a slice, 
-    // otherwise an empty array is returned. For example if the value were "client, proxy1, proxy2" 
+    // otherwise an empty slice is returned. For example if the value were "client, proxy1, proxy2" 
     // you would receive the slice {"client", "proxy1", "proxy2"} where "proxy2" is the furthest down-stream.
     Ips []string
 
@@ -130,6 +130,8 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
         this.SignedCookies = map[string]string{}
     }
 
+    this.Accepted = []string{}
+
     this.Ip = this.RemoteAddr
     // this.Ips
     this.Path = this.URL.Path
@@ -199,7 +201,12 @@ func (this *Request) Get(f string) (string) {
     otherwise undefined - in which case you should respond with 406 "Not Acceptable".
 */
 func (this *Request) Accepts(t string) (bool) {
-    panic(halt)
+    for _, v := range this.Accepted {
+        if strings.ToLower(t) == v {
+            return true
+        }
+    }
+    return false
 }
 
 /*
