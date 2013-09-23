@@ -4,6 +4,7 @@ import(
     "fmt"
     "mime"
     "strings"
+    "path/filepath"
     "encoding/json"
     "github.com/ricallinson/stackr"
 )
@@ -281,7 +282,12 @@ func (this *Response) Format(i interface{}) {
     // Content-Type: image/png
 */
 func (this *Response) Attachment(f ...string) {
-    panic(halt)
+    if len(f) > 0 {
+        this.ContentType(filepath.Ext(f[0]))
+        this.Set("Content-Disposition", "attachment; filename=\"" + filepath.Base(f[0]) + "\"")
+    } else {
+        this.Set("Content-Disposition", "attachment")
+    }
 }
 
 /*

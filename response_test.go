@@ -270,8 +270,16 @@ func TestResponse(t *testing.T) {
 
     Describe("Attachment()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [attachment]", func() {
+            res.Attachment()
+            AssertEqual(res.Get("Content-Type"), "")
+            AssertEqual(res.Get("Content-Disposition"), "attachment")
+        })
+
+        It("should return [image/png & attachment; filename=\"logo.png\"]", func() {
+            res.Attachment("path/to/logo.png")
+            AssertEqual(res.Get("Content-Type"), "image/png")
+            AssertEqual(res.Get("Content-Disposition"), "attachment; filename=\"logo.png\"")
         })
     })
 
