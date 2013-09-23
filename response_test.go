@@ -21,6 +21,7 @@ func TestResponse(t *testing.T) {
                 Request: &stackr.Request{
                     Request: &http.Request{
                         URL: &url.URL{},
+                        Header: map[string][]string{},
                     },
                 },
                 Query: map[string]string{},
@@ -112,8 +113,69 @@ func TestResponse(t *testing.T) {
 
     Describe("Location()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [http://www.foo.com/]", func() {
+            res.Location("http://www.foo.com/")
+            AssertEqual(res.Get("location"), "http://www.foo.com/")
+        })
+
+        It("should return [/bar/baz]", func() {
+            res.Location("/bar/baz")
+            AssertEqual(res.Get("location"), "/bar/baz")
+        })
+
+        It("should return [/bar/baz]", func() {
+            res.req.OriginalUrl = "http://www.foo.com/"
+            res.app.Set("app path", "/")
+            res.Location("bar/baz")
+            AssertEqual(res.Get("location"), "/bar/baz")
+        })
+
+        It("should return [/foo/bar/baz]", func() {
+            res.req.OriginalUrl = "http://www.foo.com"
+            res.app.Set("app path", "/foo/")
+            res.Location("bar/baz")
+            AssertEqual(res.Get("location"), "/foo/bar/baz")
+        })
+
+        It("should return [http://www.foo.com/bar/baz]", func() {
+            res.req.OriginalUrl = "http://www.foo.com/"
+            res.Location("./bar/baz")
+            AssertEqual(res.Get("location"), "http://www.foo.com/bar/baz")
+        })
+
+        It("should return [http://www.foo.com/bar/baz]", func() {
+            res.req.OriginalUrl = "http://www.foo.com"
+            res.Location("./bar/baz")
+            AssertEqual(res.Get("location"), "http://www.foo.com/bar/baz")
+        })
+
+        It("should return [http://www.foo.com/bar/baz]", func() {
+            res.req.OriginalUrl = "http://www.foo.com/?foo=bar"
+            res.Location("./bar/baz")
+            AssertEqual(res.Get("location"), "http://www.foo.com/bar/baz")
+        })
+
+        It("should return [http://www.foo.com/bar/baz]", func() {
+            res.req.OriginalUrl = "http://www.foo.com?foo=bar"
+            res.Location("./bar/baz")
+            AssertEqual(res.Get("location"), "http://www.foo.com/bar/baz")
+        })
+
+        It("should return [http://www.foo.com/bar/baz]", func() {
+            res.req.OriginalUrl = "http://www.foo.com/foo/bar"
+            res.Location("../baz")
+            AssertEqual(res.Get("location"), "http://www.foo.com/foo/baz")
+        })
+
+        It("should return [http://www.foo.com/]", func() {
+            res.req.Header.Set("Referrer", "http://www.foo.com/")
+            res.Location("back")
+            AssertEqual(res.Get("location"), "http://www.foo.com/")
+        })
+
+        It("should return [/]", func() {
+            res.Location("back")
+            AssertEqual(res.Get("location"), "/")
         })
     })
 

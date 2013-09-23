@@ -139,6 +139,40 @@ func (this *Response) Redirect(uri string, s ...int) {
     Set the location header.
 */
 func (this *Response) Location(uri string) {
+
+    app := this.app
+    req := this.req
+
+    /*
+        If the given uri == "back" then try and get the "Referrer"; or use "/"
+    */
+
+    if uri == "back" {
+        uri = req.Get("Referrer")
+        if uri == "" {
+            uri = "/"
+        }
+    }
+
+    /*
+        If the uri is relative then build it.
+    */
+
+    if strings.Index(uri, "://") == -1 {
+        if uri[:1] == "." {
+            // relative to path
+            path := req.OriginalUrl
+            if i := strings.Index(path, "?"); i > 0 {
+                path = path[:i]
+            }
+            i := strings.Index(path, "://") + 2
+            uri = path[:i] + filepath.Join(path[i:], uri)
+        } else if uri[:1] != "/" {
+            // relative to mount-point
+            uri = filepath.Join(app.Path(), uri)
+        }
+    }
+
     this.Set("Location", uri)
 }
 
@@ -366,7 +400,7 @@ func (this *Response) Render(v string, l ...interface{}) {
 */
 func (this *Response) ContentType(t string) {
     if strings.Index(t, "/") == -1 {
-        if strings.Index(t, ".") != 0 {
+        if t[:1] != "." {
             t = "." + t
         }
         t = mime.TypeByExtension(t)

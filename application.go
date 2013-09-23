@@ -110,6 +110,9 @@ func (this *Server) defaultConfiguration() {
     this.Set("views", filepath.Join(cwd, "views"));
     this.Set("jsonp callback name", "callback");
 
+    // App path
+    this.Set("app path", "/")
+
     if this.Get("env") == "development" {
         this.Set("json spaces", "2");
     }
@@ -117,6 +120,13 @@ func (this *Server) defaultConfiguration() {
     if this.Get("env") == "production" {
         this.Enable("view cache");
     }
+}
+
+/*
+    Returns the root of this app.
+*/
+func (this *Server) Path() (string) {
+    return this.Get("app path")
 }
 
 /*
