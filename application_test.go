@@ -91,7 +91,7 @@ func TestApplication(t *testing.T) {
 
         It("should return [true]", func() {
             s := CreateServer()
-            s.Engine(".html", func(){})
+            s.Engine(".html", &MockRenderer{})
             _, ok := s.engines[".html"]
             AssertEqual(ok, true)
         })

@@ -397,6 +397,13 @@ func TestResponse(t *testing.T) {
         })
     })
 
+    Describe("Vary()", func() {
+
+        It("should return [skipped]", func() {
+            AssertEqual(true, true)
+        })
+    })
+
     Describe("Render()", func() {
 
         It("should return [skipped]", func() {

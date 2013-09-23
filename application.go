@@ -41,7 +41,7 @@ type Server struct {
     settings map[string]string
 
     // The rendering engines assigned.
-    engines map[string]func()
+    engines map[string]Renderer
 }
 
 /*
@@ -64,7 +64,7 @@ func CreateServer() (*Server) {
         Locals: map[string]string{},
         Router: &Router{},
         settings: map[string]string{},
-        engines: map[string]func(){},
+        engines: map[string]Renderer{},
     }
     this.defaultConfiguration()
     return this
@@ -202,7 +202,7 @@ func (this *Server) Configure(n string, fn func()) {
 /*
     Register the given template engine callback as ext.
 */
-func (this *Server) Engine(ext string, fn func()) {
+func (this *Server) Engine(ext string, fn Renderer) {
     this.engines[ext] = fn
 }
 
@@ -220,7 +220,7 @@ func (this *Server) Param(p string, fn func(*Request, *Response, func())) {
     Render a "view" with a callback responding with the rendered string. 
     This is the app-level variant of "res.render()", and otherwise behaves the same way.
 */
-func (this *Server) Render(v string, opt interface{}, fn func()) {
+func (this *Server) Render(view string, i ...interface{}) {
     panic(halt)
 }
 

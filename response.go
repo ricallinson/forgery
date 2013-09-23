@@ -335,6 +335,13 @@ func (this *Response) Format(i interface{}) {
 }
 
 /*
+    Add `field` to Vary. If already present in the Vary set, then this call is simply ignored.
+*/
+func (this *Response) Vary() {
+    panic(halt)
+}
+
+/*
     Sets the Content-Disposition header field to "attachment". If a filename is given then 
     the Content-Type will be automatically set based on the extname via res.Type(), 
     and the Content-Disposition's "filename=" parameter will be set.
@@ -382,8 +389,8 @@ func (this *Response) Links(l []string) {
 /*
     Render a "view". When an error occurs next(err) is invoked internally.
 */
-func (this *Response) Render(v string, l ...interface{}) {
-    panic(halt)
+func (this *Response) Render(view string, i ...interface{}) {
+    this.app.Render(view, i...)
 }
 
 /*
