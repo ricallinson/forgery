@@ -6,7 +6,7 @@ import(
     . "github.com/ricallinson/simplebdd"
 )
 
-func TestStack(t *testing.T) {
+func TestApplication(t *testing.T) {
 
     Describe("CreateServer()", func() {
 

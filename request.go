@@ -198,7 +198,7 @@ func (this *Request) Get(f string) (string) {
     Check if the given types are acceptable, returning the best match when true, 
     otherwise undefined - in which case you should respond with 406 "Not Acceptable".
 */
-func (this *Request) Accepts(t string) {
+func (this *Request) Accepts(t string) (bool) {
     panic(halt)
 }
 
@@ -206,7 +206,7 @@ func (this *Request) Accepts(t string) {
     Check if the incoming request contains the "Content-Type" header field, and it matches the give mime "type".
 */
 func (this *Request) Is(t string) (bool) {
-    h := this.Get("content-type")
+    h := this.Get("Content-Type")
     return strings.ToLower(h) == strings.ToLower(t)
 }
 
