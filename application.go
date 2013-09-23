@@ -15,6 +15,11 @@ import(
     "github.com/ricallinson/stackr"
 )
 
+const (
+    TRUE = "true"
+    FALSE = "false"
+)
+
 var halt = "HALT: Not implemented yet!"
 
 type Server struct {
@@ -91,8 +96,8 @@ func (this *Server) defaultConfiguration() {
     // this.Use(middleware.init(this));
 
     // router
-    this.Enabled("case sensitive routing");
-    this.Enabled("strict routing");
+    // this.Enabled("case sensitive routing");
+    // this.Enabled("strict routing");
 
     // setup locals
     // this.locals = locals(this);
@@ -153,28 +158,28 @@ func (this *Server) Get(path string, fn ...func(*Request, *Response, func())) (s
     Set setting "name" to "true".
 */
 func (this *Server) Enable(n string) {
-    this.Set(n, "TRUE")
+    this.Set(n, TRUE)
 }
 
 /*
     Set setting "name" to "false".
 */
 func (this *Server) Disable(n string) {
-    this.Set(n, "FALSE")
+    this.Set(n, FALSE)
 }
 
 /*
     Check if setting "name" is enabled.
 */
 func (this *Server) Enabled(n string) (bool) {
-    return this.Get(n) == "TRUE"
+    return this.Get(n) == TRUE
 }
 
 /*
     Check if setting "name" is disabled.
 */
 func (this *Server) Disabled(n string) (bool) {
-    return this.Get(n) == "FALSE"
+    return this.Get(n) == FALSE
 }
 
 /*
