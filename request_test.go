@@ -74,25 +74,25 @@ func TestRequest(t *testing.T) {
     Describe("Accepts()", func() {
 
         It("should return [true]", func() {
-            req.Accepted = []string{"text/html"}
+            req.Header.Set("Accept", "text/html")
             req.Accepts("text/html")
             AssertEqual(req.Accepts("text/html"), true)
         })
 
         It("should return [true]", func() {
-            req.Accepted = []string{"text/html", "text/plain"}
+            req.Header.Set("Accept", "text/html, text/plain")
             req.Accepts("text/html")
             AssertEqual(req.Accepts("text/plain"), true)
         })
 
         It("should return [true]", func() {
-            req.Accepted = []string{"text/html", "text/plain"}
+            req.Header.Set("Accept", "text/html, text/plain")
             req.Accepts("text/html")
             AssertEqual(req.Accepts("Text/Plain"), true)
         })
 
         It("should return [true]", func() {
-            req.Accepted = []string{"text/html", "text/plain"}
+            req.Header.Set("Accept", "text/html, text/plain")
             req.Accepts("text/html")
             AssertEqual(req.Accepts("text"), false)
         })

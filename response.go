@@ -246,7 +246,7 @@ func (this *Response) Send(b interface{}, s ...int) {
     // ETag support
 
     // Freshness
-    if req.Fresh {
+    if req.Fresh(this.StatusCode) {
         this.StatusCode = 304;
     }
 

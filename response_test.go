@@ -83,21 +83,21 @@ func TestResponse(t *testing.T) {
         })
 
         It("should return [Moved Temporarily. Redirecting to http://www.foo.com/]", func() {
-            res.req.Accepted = []string{"text/plain"}
+            res.req.Header.Set("Accept", "text/plain")
             res.Redirect("http://www.foo.com/")
             w := bytes.NewBuffer(mock.Written).String()
             AssertEqual(w, "Moved Temporarily. Redirecting to http://www.foo.com/")
         })
 
         It("should return [HTML <p>...]", func() {
-            res.req.Accepted = []string{"text/html"}
+            res.req.Header.Set("Accept", "text/html")
             res.Redirect("http://www.foo.com/")
             w := bytes.NewBuffer(mock.Written).String()
             AssertEqual(w, "<p>Moved Temporarily. Redirecting to <a href=\"http://www.foo.com/\">http://www.foo.com/</a></p>")
         })
 
         It("should return [Not Found. Redirecting to http://www.foo.com/]", func() {
-            res.req.Accepted = []string{"text/plain"}
+            res.req.Header.Set("Accept", "text/plain")
             res.Redirect("http://www.foo.com/", 404)
             w := bytes.NewBuffer(mock.Written).String()
             AssertEqual(w, "Not Found. Redirecting to http://www.foo.com/")
@@ -105,7 +105,7 @@ func TestResponse(t *testing.T) {
 
         It("should return [Not Found. Redirecting to http://www.foo.com/]", func() {
             res.req.Method = "HEAD"
-            res.req.Accepted = []string{"text/plain"}
+            res.req.Header.Set("Accept", "text/plain")
             res.Redirect("http://www.foo.com/")
             w := bytes.NewBuffer(mock.Written).String()
             AssertEqual(w, "")
@@ -297,8 +297,9 @@ func TestResponse(t *testing.T) {
         })
 
         It("should return [304]", func() {
-            res.req.Fresh = true
-            res.Send("foo", 200)
+            res.req.Header.Set("X-Fresh", "true") // Tmp for testing
+            res.req.Method = "GET"
+            res.Send("foo", 100)
             w := bytes.NewBuffer(mock.Written).String()
             AssertEqual(res.StatusCode, 304)
             AssertEqual(res.Get("Content-Type"), "")

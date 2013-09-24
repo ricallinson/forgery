@@ -1,6 +1,7 @@
 package f
 
 import(
+    "regexp"
     "strings"
     "github.com/ricallinson/stackr"
 )
@@ -15,6 +16,14 @@ type Request struct {
 
     // The application server.
     app *Server
+
+    // Return the remote address, or when "trust proxy" is enabled - the upstream address.
+    Ip string
+
+    // When "trust proxy" is `true`, parse the "X-Forwarded-For" ip address list and return a slice, 
+    // otherwise an empty slice is returned. For example if the value were "client, proxy1, proxy2" 
+    // you would receive the slice {"client", "proxy1", "proxy2"} where "proxy2" is the furthest down-stream.
+    Ips []string
 
     // This property is a slice containing properties mapped to the named route "parameters". 
     // For example if you have the route "/user/:name", then the "name" property is available 
@@ -37,6 +46,15 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
     this.Request = req
 
     this.app = app
+
+    if t, v := this.app.Get("trust proxy"), this.Header.Get("X-Forwarded-For"); len(t) > 0 && len(v) > 0 {
+        s := regexp.MustCompile(" *, *").Split(v, -1)
+        this.Ip = s[0]
+        this.Ips = s
+    } else {
+        this.Ip = this.RemoteAddr
+        this.Ips = []string{}
+    }
 
     this.Params = map[string]string{}
 
@@ -123,7 +141,7 @@ func (this *Request) Get(f string) (string) {
     otherwise undefined - in which case you should respond with 406 "Not Acceptable".
 */
 func (this *Request) Accepts(t string) (bool) {
-    for _, v := range this.Accepted {
+    for _, v := range this.Accepted() {
         if strings.ToLower(t) == v {
             return true
         }
