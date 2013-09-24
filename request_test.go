@@ -19,6 +19,8 @@ func TestRequest(t *testing.T) {
                 Request: &http.Request{
                     URL: &url.URL{},
                 },
+                Body: map[string]string{},
+                Query: map[string]string{},
             },
             &Server{},
         )

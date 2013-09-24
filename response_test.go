@@ -23,8 +23,8 @@ func TestResponse(t *testing.T) {
                         URL: &url.URL{},
                         Header: map[string][]string{},
                     },
+                    Query: map[string]string{},
                 },
-                Query: map[string]string{},
             },
             &stackr.Response{
                 Writer: mock,
