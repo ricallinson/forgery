@@ -43,6 +43,6 @@ type MockRenderer struct {
     
 }
 
-func (this *MockRenderer) Render(t string, o interface{}) {
-
+func (this *MockRenderer) Render(v string, i ...interface{}) (string, error) {
+    return v, nil
 }

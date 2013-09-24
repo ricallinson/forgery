@@ -234,11 +234,13 @@ func (this *Server) Render(view string, i ...interface{}) (string) {
         return ""
     }
 
-    if t, err := this.engines[ext].Render(file, i...); err == nil {
-        return t
+    t, err := this.engines[ext].Render(file, i...)
+
+    if err != nil {
+        return ""
     }
 
-    return ""
+    return t
 }
 
 /*
