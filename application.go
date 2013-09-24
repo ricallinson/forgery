@@ -232,7 +232,7 @@ func (this *Server) Render(view string, i ...interface{}) (string, error) {
     file := filepath.Join(this.Get("views"), view)
 
     if _, err := os.Stat(file); err != nil || os.IsNotExist(err) {
-        return "", errors.New("View not found.")
+        return "", errors.New("Failed to lookup view '" + file + "'")
     }
 
     t, err := this.engines[ext].Render(file, i...)
