@@ -390,7 +390,8 @@ func (this *Response) Links(l []string) {
     Render a "view". When an error occurs next(err) is invoked internally.
 */
 func (this *Response) Render(view string, i ...interface{}) {
-    this.app.Render(view, i...)
+    s := this.app.Render(view, i...)
+    this.Send(s)
 }
 
 /*

@@ -217,11 +217,28 @@ func (this *Server) Param(p string, fn func(*Request, *Response, func())) {
 }
 
 /*
-    Render a "view" with a callback responding with the rendered string. 
+    Render a "view" responding with the rendered string. 
     This is the app-level variant of "res.render()", and otherwise behaves the same way.
 */
-func (this *Server) Render(view string, i ...interface{}) {
-    panic(halt)
+func (this *Server) Render(view string, i ...interface{}) (string) {
+
+    ext := filepath.Ext(view)
+
+    if _, ok := this.engines[ext]; ok == false {
+        return ""
+    }
+
+    file := filepath.Join(this.Get("views"), view)
+
+    if _, err := os.Stat(file); err != nil || os.IsNotExist(err) {
+        return ""
+    }
+
+    if t, err := this.engines[ext].Render(file, i...); err == nil {
+        return t
+    }
+
+    return ""
 }
 
 /*
