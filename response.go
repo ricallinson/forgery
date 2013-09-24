@@ -331,7 +331,7 @@ func (this *Response) Jsonp(i interface{}, s ...int) {
 
 /*
     Performs content-negotiation on the request Accept header field when present. 
-    This method uses "req.accepted", an array of acceptable types ordered by their 
+    This method uses "req.Accepted", a slice of acceptable types ordered by their 
     quality values, otherwise the first callback is invoked. When no match is performed 
     the server responds with 406 "Not Acceptable", or invokes the "default" callback.
 */

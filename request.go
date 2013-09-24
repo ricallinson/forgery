@@ -55,16 +55,6 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
         this.Files = map[string]interface{}{}
     }
 
-    // Could have been set by middleware.
-    if this.Cookies == nil {
-        this.Cookies = map[string]string{}
-    }
-
-    // Could have been set by middleware.
-    if this.SignedCookies == nil {
-        this.SignedCookies = map[string]string{}
-    }
-
     return this
 }
 
