@@ -59,6 +59,24 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
 }
 
 /*
+    Contains the cookies sent by the user-agent.
+*/
+func (this *Request) Cookie(n string, i *interface{}) {
+    //
+}
+
+/*
+    Contains the signed cookies sent by the user-agent, unsigned and ready for use. 
+    Signed cookies are accessed by a different function to show developer intent, otherwise a 
+    malicious attack could be placed on `req.Cookie` values which are easy to spoof. 
+    Note that signing a cookie does not mean it is "hidden" nor encrypted, this simply 
+    prevents tampering as the secret used to sign is private.
+*/
+func (this *Request) SignedCookie(n string, i *interface{}) {
+    //
+}
+
+/*
     Return the value of param "name" when present. Lookup is performed in the following order:
 
     * Params
