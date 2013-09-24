@@ -38,8 +38,31 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
 
     this.app = app
 
-    if this.Params == nil {
-        this.Params = map[string]string{}
+    this.Params = map[string]string{}
+
+    // Could have been set by middleware.
+    if this.Body == nil {
+        this.Body = map[string]string{}
+    }
+
+    // Could have been set by middleware.
+    if this.Query == nil {
+        this.Query = map[string]string{}
+    }
+
+    // Could have been set by middleware.
+    if this.Files == nil {
+        this.Files = map[string]interface{}{}
+    }
+
+    // Could have been set by middleware.
+    if this.Cookies == nil {
+        this.Cookies = map[string]string{}
+    }
+
+    // Could have been set by middleware.
+    if this.SignedCookies == nil {
+        this.SignedCookies = map[string]string{}
     }
 
     return this

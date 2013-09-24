@@ -19,9 +19,8 @@ import(
 const (
     TRUE = "true"
     FALSE = "false"
+    halt = "HALT: Not implemented yet!"
 )
-
-var halt = "HALT: Not implemented yet!"
 
 type Server struct {
 
