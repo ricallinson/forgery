@@ -10,6 +10,7 @@ package f
 
 import(
     "os"
+    "errors"
     "strings"
     "path/filepath"
     "github.com/ricallinson/stackr"
@@ -220,27 +221,27 @@ func (this *Server) Param(p string, fn func(*Request, *Response, func())) {
     Render a "view" responding with the rendered string. 
     This is the app-level variant of "res.render()", and otherwise behaves the same way.
 */
-func (this *Server) Render(view string, i ...interface{}) (string) {
+func (this *Server) Render(view string, i ...interface{}) (string, error) {
 
     ext := filepath.Ext(view)
 
     if _, ok := this.engines[ext]; ok == false {
-        return ""
+        return "", errors.New("Engine not found.")
     }
 
     file := filepath.Join(this.Get("views"), view)
 
     if _, err := os.Stat(file); err != nil || os.IsNotExist(err) {
-        return ""
+        return "", errors.New("View not found.")
     }
 
     t, err := this.engines[ext].Render(file, i...)
 
     if err != nil {
-        return ""
+        return "", errors.New("Problem rendering view.")
     }
 
-    return t
+    return t, nil
 }
 
 /*
@@ -281,7 +282,7 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
 
         for _, fn := range funcs {
             r := createRequest(req, this)
-            fn(r, createResponse(r, res, this), next)
+            fn(r, createResponse(r, res, next, this), next)
         }
     })
 }

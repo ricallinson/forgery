@@ -21,6 +21,9 @@ type Response struct {
     // The Request object.
     req *Request
 
+    // The next function.
+    next func()
+
     // The application server.
     app *Server
 
@@ -37,7 +40,7 @@ type Response struct {
     Returns a new HTTP Response.
 */
 
-func createResponse(req *Request, res *stackr.Response, app *Server) (*Response) {
+func createResponse(req *Request, res *stackr.Response, next func(), app *Server) (*Response) {
 
     this := &Response{}
 
@@ -46,6 +49,8 @@ func createResponse(req *Request, res *stackr.Response, app *Server) (*Response)
     this.req = req
 
     this.app = app
+
+    this.next = next
 
     this.Charset = "utf-8"
 
@@ -390,7 +395,11 @@ func (this *Response) Links(l []string) {
     Render a "view". When an error occurs next(err) is invoked internally.
 */
 func (this *Response) Render(view string, i ...interface{}) {
-    s := this.app.Render(view, i...)
+    s, err := this.app.Render(view, i...)
+    if err != nil {
+        this.next()
+        return
+    }
     this.Send(s)
 }
 

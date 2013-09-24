@@ -29,6 +29,7 @@ func TestResponse(t *testing.T) {
             &stackr.Response{
                 Writer: mock,
             },
+            func(){},
             &Server{
                 settings: map[string]string{},
             },
