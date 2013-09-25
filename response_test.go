@@ -17,15 +17,6 @@ func TestResponse(t *testing.T) {
     BeforeEach(func() {
         mock = NewMockResponseWriter(false)
         res = createResponse(
-            &Request{
-                Request: &stackr.Request{
-                    Request: &http.Request{
-                        URL: &url.URL{},
-                        Header: map[string][]string{},
-                    },
-                    Query: map[string]string{},
-                },
-            },
             &stackr.Response{
                 Writer: mock,
             },
@@ -34,6 +25,16 @@ func TestResponse(t *testing.T) {
                 settings: map[string]string{},
             },
         )
+        res.req = &Request{
+            Request: &stackr.Request{
+                Request: &http.Request{
+                    URL: &url.URL{},
+                    Header: map[string][]string{},
+                },
+                Query: map[string]string{},
+            },
+        }
+        res.req.res = res // Crazy shit!
     })
 
     Describe("Status()", func() {

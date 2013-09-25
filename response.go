@@ -19,7 +19,7 @@ type Response struct {
     // The stackr.Response.
     *stackr.Response
 
-    // The Request object.
+    // The forgery.Request matched to this Response.
     req *Request
 
     // The next function.
@@ -41,13 +41,11 @@ type Response struct {
     Returns a new HTTP Response.
 */
 
-func createResponse(req *Request, res *stackr.Response, next func(), app *Server) (*Response) {
+func createResponse(res *stackr.Response, next func(), app *Server) (*Response) {
 
     this := &Response{}
 
     this.Response = res
-
-    this.req = req
 
     this.app = app
 
@@ -247,7 +245,7 @@ func (this *Response) Send(b interface{}, s ...int) {
     // ETag support
 
     // Freshness
-    if req.Fresh(this.StatusCode) {
+    if req.Fresh() {
         this.StatusCode = 304;
     }
 

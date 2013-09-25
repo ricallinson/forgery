@@ -343,8 +343,11 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
         }
 
         for _, fn := range funcs {
-            r := createRequest(req, this)
-            fn(r, createResponse(r, res, next, this), next)
+            freq := createRequest(req, this)
+            fres := createResponse(res, next, this)
+            freq.res = fres // Add the Response to the Request
+            fres.req = freq // Add the Request to the Response
+            fn(freq, fres, next)
         }
     })
 }

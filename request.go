@@ -14,6 +14,9 @@ type Request struct {
     // The stackr.Request type.
     *stackr.Request
 
+    // The forgery.Response matched to this request.
+    res *Response
+
     // The application server.
     app *Server
 
@@ -196,13 +199,13 @@ func (this *Request) AcceptsLanguage(l string) (bool) {
     Check if the request is fresh - aka Last-Modified and/or the ETag still match, 
     indicating that the resource is "fresh".
 */
-func (this *Request) Fresh(s int) (bool) {
+func (this *Request) Fresh() (bool) {
 
     if m := this.Method; m != "GET" && m != "HEAD" {
         return false
     }
 
-    if (s >= 200 && s < 300) || 304 == s {
+    if s := this.res.StatusCode; (s >= 200 && s < 300) || 304 == s {
         return false
     }
 
@@ -217,6 +220,6 @@ func (this *Request) Fresh(s int) (bool) {
     Check if the request is stale - aka Last-Modified and/or the ETag do not match, 
     indicating that the resource is "stale".
 */
-func (this *Request) Stale(s int) (bool) {
-    return this.Fresh(s) == false
+func (this *Request) Stale() (bool) {
+    return this.Fresh() == false
 }

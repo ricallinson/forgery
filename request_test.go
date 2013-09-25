@@ -23,6 +23,9 @@ func TestRequest(t *testing.T) {
             },
             &Server{},
         )
+        req.res = &Response{
+            Response: &stackr.Response{},
+        }
     })
 
     Describe("createRequest()", func() {
@@ -173,25 +176,29 @@ func TestRequest(t *testing.T) {
 
         It("should return [false]", func() {
             req.Method = "DELETE"
-            a := req.Fresh(100)
+            req.res.StatusCode = 100
+            a := req.Fresh()
             AssertEqual(a, false)
         })
 
         It("should return [false]", func() {
             req.Method = "GET"
-            a := req.Fresh(100)
+            req.res.StatusCode = 100
+            a := req.Fresh()
             AssertEqual(a, false)
         })
 
         It("should return [false]", func() {
             req.Method = "GET"
-            a := req.Fresh(200)
+            req.res.StatusCode = 200
+            a := req.Fresh()
             AssertEqual(a, false)
         })
 
         It("should return [false]", func() {
             req.Method = "HEAD"
-            a := req.Fresh(200)
+            req.res.StatusCode = 200
+            a := req.Fresh()
             AssertEqual(a, false)
         })
     })
@@ -199,7 +206,8 @@ func TestRequest(t *testing.T) {
     Describe("Stale()", func() {
 
         It("should return [true]", func() {
-            a := req.Stale(100)
+            req.res.StatusCode = 100
+            a := req.Stale()
             AssertEqual(a, true)
         })
     })
