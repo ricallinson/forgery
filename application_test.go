@@ -26,7 +26,7 @@ func TestApplication(t *testing.T) {
             AssertEqual(s.Enabled("x-powered-by"), true)
             AssertEqual(s.Enabled("etag"), true)
             AssertEqual(s.Get("env"), "development")
-            AssertEqual(s.Get("subdomain offset"), "2")
+            // AssertEqual(s.Get("subdomain offset"), "2")
             AssertEqual(s.Get("jsonp callback name"), "callback")
         })
     })

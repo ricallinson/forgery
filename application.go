@@ -49,14 +49,14 @@ type Server struct {
     Create a new stackr server.
 
     * "env" Environment mode, defaults to $GO_ENV or "development"
-    * X "trust proxy" Enables reverse proxy support, disabled by default
+    * "trust proxy" Enables reverse proxy support, disabled by default
     * "jsonp callback name" Changes the default callback name of "?callback="
     * X "json replacer" JSON replacer callback, null by default
     * X "json spaces" JSON response spaces for formatting, defaults to 2 in development, 0 in production
     * X "case sensitive routing" Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as the same
     * X "strict routing" Enable strict routing, by default "/foo" and "/foo/" are treated the same by the router
-    * "view cache" Enables view template compilation caching, enabled in production by default
-    * X "view engine" The default engine extension to use when omitted
+    * X "view cache" Enables view template compilation caching, enabled in production by default
+    * "view engine" The default engine extension to use when omitted
     * "views" The view directory path, defaulting to "./views"
 */
 func CreateServer() (*Server) {
@@ -89,7 +89,7 @@ func (this *Server) defaultConfiguration() {
     if this.Get("env") == "" {
         this.Set("env", "development"); 
     }
-    this.Set("subdomain offset", "2");
+
     // debug("booting in %s mode", this.get("env"));
 
     // implicit middleware
@@ -107,19 +107,86 @@ func (this *Server) defaultConfiguration() {
     // this.locals.settings = this.settings;
 
     // default configuration
-    // this.Set("view", View);
-    this.Set("views", filepath.Join(cwd, "views"));
-    this.Set("jsonp callback name", "callback");
+    this.Configure(func() {
+        // this.Set("subdomain offset", "2");
+        this.Set("views", filepath.Join(cwd, "views"));
+        this.Set("jsonp callback name", "callback");
+        this.Set("app path", "/")
+    })
 
-    // App path
-    this.Set("app path", "/")
+    this.Configure("development", func() {
+        this.Set("json spaces", "2")
+    })
 
-    if this.Get("env") == "development" {
-        this.Set("json spaces", "2");
+    this.Configure("production", func() {
+        this.Enable("view cache")
+    })
+}
+
+/*
+    Configure callback for zero or more envs,
+    when no `env` is specified that callback will
+    be invoked for all environments. Any combination
+    can be used multiple times, in any order desired.
+
+    Examples:
+
+        app.Configure(func() {
+          // executed for all envs
+        })
+
+        app.Configure("stage", func() {
+          // executed staging env
+        })
+
+        app.Configure("stage", "production", func() {
+          // executed for stage and production
+        })
+
+    Note:
+
+    These callbacks are invoked immediately, and
+    are effectively sugar for the following:
+
+    var env = os.Getenv("GO_ENV")
+
+    switch (env) {
+    case 'development':
+    ...
+    case 'stage':
+    ...
+    case 'production':
+    ...
+    }
+*/
+func (this *Server) Configure(i ...interface{}) {
+
+    var envs []string
+    var fn func()
+
+    // Look at the given inputs.
+    for _, t := range i {
+        switch t.(type) {
+        case string:
+            envs = append(envs, t.(string))
+        case func():
+            fn = t.(func())
+        }
     }
 
-    if this.Get("env") == "production" {
-        this.Enable("view cache");
+    // If there are no envs call the func and return.
+    if len(envs) == 0 {
+        fn()
+        return
+    }
+
+    // Loop over the envs until a match is found.
+    // Then call the function.
+    for _, e := range envs {
+        if e == this.Get("env") {
+            fn()
+            return
+        }
     }
 }
 
