@@ -295,6 +295,8 @@ func (this *Server) Render(view string, i ...interface{}) (string, error) {
         return "", errors.New("Failed to lookup view '" + file + "'")
     }
 
+    i = append(i, this.Locals)
+
     t, err := this.engines[ext].Render(file, i...)
 
     if err != nil {

@@ -18,11 +18,35 @@ func TestRequest(t *testing.T) {
             &stackr.Request{
                 Request: &http.Request{
                     URL: &url.URL{},
+                    Header: map[string][]string{},
                 },
             },
             &Server{},
         )
-        req.Header = map[string][]string{}
+    })
+
+    Describe("createRequest()", func() {
+
+        It("should return [true]", func() {
+            app := &Server{
+                settings: map[string]string{},
+            }
+            httpReq := &http.Request{
+                URL: &url.URL{},
+                Header: map[string][]string{},
+            }
+
+            app.Enable("trust proxy")
+            httpReq.Header.Set("X-Forwarded-For", "129.78.138.66, 129.78.64.103")
+
+            req := createRequest(
+                &stackr.Request{
+                    Request: httpReq,
+                },
+                app,
+            )
+            AssertEqual(req.Ips[1], "129.78.64.103")
+        })
     })
 
     Describe("Param()", func() {
