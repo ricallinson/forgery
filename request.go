@@ -25,6 +25,20 @@ type Request struct {
     // you would receive the slice {"client", "proxy1", "proxy2"} where "proxy2" is the furthest down-stream.
     Ips []string
 
+    // Returns the request URL pathname.
+    Path string
+
+    // Check if the request was issued with the "X-Requested-With" header field set to "XMLHttpRequest" (jQuery etc).
+    Xhr bool
+
+    // Return the protocol string "http" or "https" when requested with TLS. 
+    // When the "trust proxy" setting is enabled the "X-Forwarded-Proto" header field will be trusted. 
+    // If you're running behind a reverse proxy that supplies https for you this may be enabled.
+    Protocol string
+
+    // Check if a TLS connection is established. This is a short-hand for: "https" == req.Protocol
+    Secure bool
+
     // This property is a slice containing properties mapped to the named route "parameters". 
     // For example if you have the route "/user/:name", then the "name" property is available 
     // to you as req.params["name"]. This object defaults to {}.
@@ -55,6 +69,12 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
         this.Ip = this.RemoteAddr
         this.Ips = []string{}
     }
+
+    // Helpers for standard headers.
+    this.Path = this.URL.Path
+    this.Xhr = this.Header.Get("X-Requested-With") == "XMLHttpRequest"
+    this.Protocol = this.URL.Scheme
+    this.Secure = this.Protocol == "https"
 
     this.Params = map[string]string{}
 
