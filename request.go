@@ -4,6 +4,7 @@ import(
     "regexp"
     "strings"
     "github.com/ricallinson/stackr"
+    "github.com/ricallinson/httphelp"
 )
 
 /*
@@ -209,11 +210,7 @@ func (this *Request) Fresh() (bool) {
         return false
     }
 
-    /*
-        Real fresh test goes here.
-    */
-
-    return len(this.Header.Get("X-Fresh")) > 0 // Tmp for testing
+    return httphelp.Fresh(this.Header, this.res.Writer.Header())
 }
 
 /*

@@ -298,7 +298,7 @@ func TestResponse(t *testing.T) {
         })
 
         It("should return [304]", func() {
-            res.req.Header.Set("X-Fresh", "true") // Tmp for testing
+            res.req.Header.Set("if-none-match", "*")
             res.req.Method = "GET"
             res.Send("foo", 100)
             w := bytes.NewBuffer(mock.Written).String()

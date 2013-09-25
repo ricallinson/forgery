@@ -12,8 +12,10 @@ import(
 func TestRequest(t *testing.T) {
 
     var req *Request
+    var mock *MockResponseWriter
 
     BeforeEach(func() {
+        mock = NewMockResponseWriter(false)
         req = createRequest(
             &stackr.Request{
                 Request: &http.Request{
@@ -24,7 +26,9 @@ func TestRequest(t *testing.T) {
             &Server{},
         )
         req.res = &Response{
-            Response: &stackr.Response{},
+            Response: &stackr.Response{
+                Writer: mock,
+            },
         }
     })
 
