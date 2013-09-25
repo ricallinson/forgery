@@ -80,7 +80,7 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
     Contains the cookies sent by the user-agent.
 */
 func (this *Request) Cookie(n string, i *interface{}) {
-    //
+    panic(halt)
 }
 
 /*
@@ -91,7 +91,7 @@ func (this *Request) Cookie(n string, i *interface{}) {
     prevents tampering as the secret used to sign is private.
 */
 func (this *Request) SignedCookie(n string, i *interface{}) {
-    //
+    panic(halt)
 }
 
 /*
@@ -160,13 +160,13 @@ func (this *Request) Is(t string) (bool) {
 /*
     Check if the given "charset" is acceptable.
 */
-func (this *Request) AcceptsCharset(c string) {
-    panic(halt)
+func (this *Request) AcceptsCharset(c string) (bool) {
+    return strings.Index(strings.ToLower(this.Get("Accept-Charset")), strings.ToLower(c)) > -1
 }
 
 /*
     Check if the given "lang" is acceptable.
 */
-func (this *Request) AcceptsLanguage(l string) {
-    panic(halt)
+func (this *Request) AcceptsLanguage(l string) (bool) {
+    return strings.Index(strings.ToLower(this.Get("Accept-Language")), strings.ToLower(l)) > -1
 }

@@ -19,8 +19,6 @@ func TestRequest(t *testing.T) {
                 Request: &http.Request{
                     URL: &url.URL{},
                 },
-                Body: map[string]string{},
-                Query: map[string]string{},
             },
             &Server{},
         )
@@ -113,15 +111,37 @@ func TestRequest(t *testing.T) {
 
     Describe("AcceptsCharset()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [true]", func() {
+            req.Header.Set("Accept-Charset", "utf-8")
+            AssertEqual(req.AcceptsCharset("utf-8"), true)
+        })
+
+        It("should return [true]", func() {
+            req.Header.Set("Accept-Charset", "utf-8")
+            AssertEqual(req.AcceptsCharset("UTF-8"), true)
+        })
+
+        It("should return [true]", func() {
+            req.Header.Set("Accept-Charset", "utf-8")
+            AssertEqual(req.AcceptsCharset("ISO-8859-1"), false)
         })
     })
 
     Describe("AcceptsLanguage()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [true]", func() {
+            req.Header.Set("Accept-Language", "zh, en-us; q=0.8, en; q=0.6")
+            AssertEqual(req.AcceptsLanguage("en"), true)
+        })
+
+        It("should return [true]", func() {
+            req.Header.Set("Accept-Language", "zh, en-us; q=0.8, en; q=0.6")
+            AssertEqual(req.AcceptsLanguage("en-US"), true)
+        })
+
+        It("should return [true]", func() {
+            req.Header.Set("Accept-Language", "zh, en-us; q=0.8, en; q=0.6")
+            AssertEqual(req.AcceptsLanguage("fr-CA"), false)
         })
     })
 

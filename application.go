@@ -14,6 +14,7 @@ import(
     "strings"
     "path/filepath"
     "github.com/ricallinson/stackr"
+    "github.com/ricallinson/httphelp"
 )
 
 const (
@@ -193,13 +194,6 @@ func (this *Server) Disabled(n string) (bool) {
 }
 
 /*
-    Not supported.
-*/
-func (this *Server) Configure(n string, fn func()) {
-    panic("ERROR: app.Configure() is not supported")
-}
-
-/*
     Register the given template engine callback as ext.
 */
 func (this *Server) Engine(ext string, fn Renderer) {
@@ -247,7 +241,7 @@ func (this *Server) Render(view string, i ...interface{}) (string, error) {
     This method functions just like the app.Verb(verb, ...) method, however it matches all HTTP verbs.
 */
 func (this *Server) All(path string, fn ...func(*Request, *Response, func())) {
-    for _, verb := range methods {
+    for _, verb := range httphelp.Methods {
         this.Verb(verb, path, fn...)
     }
 }

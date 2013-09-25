@@ -124,11 +124,143 @@ func TestApplication(t *testing.T) {
         })
     })
 
-    Describe("Get()", func() {
+    Describe("All Verbs Functions", func() {
 
         It("should return [true]", func() {
             s := CreateServer()
             s.Get("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Proppatch("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Post("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Put("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Head("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Delete("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Options("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Trace("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Copy("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Lock("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Move("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Propfind("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Unlock("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Report("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Mkactivity("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Mkcol("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Checkout("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Merge("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Msearch("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Notify("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Unsubscribe("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Patch("/path", func(req *Request, res *Response, next func()){})
+            AssertEqual(true, true)
+        })
+
+        It("should return [true]", func() {
+            s := CreateServer()
+            s.Subscribe("/path", func(req *Request, res *Response, next func()){})
             AssertEqual(true, true)
         })
     })

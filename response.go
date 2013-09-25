@@ -8,6 +8,7 @@ import(
     "path/filepath"
     "encoding/json"
     "github.com/ricallinson/stackr"
+    "github.com/ricallinson/httphelp"
 )
 
 /*
@@ -125,10 +126,10 @@ func (this *Response) Redirect(uri string, s ...int) {
     body := ""
 
     if this.req.Accepts("text/plain") {
-        body = StatusCodes[this.StatusCode] + ". Redirecting to " + uri;
+        body = httphelp.StatusCodes[this.StatusCode] + ". Redirecting to " + uri;
     } else if this.req.Accepts("text/html") {
         u := html.EscapeString(uri)
-        body = "<p>" + StatusCodes[this.StatusCode] + ". Redirecting to <a href=\"" + u + "\">" + u + "</a></p>";
+        body = "<p>" + httphelp.StatusCodes[this.StatusCode] + ". Redirecting to <a href=\"" + u + "\">" + u + "</a></p>";
     }
 
     this.Set("Content-Length", fmt.Sprint(len(body)))
@@ -215,7 +216,7 @@ func (this *Response) Send(b interface{}, s ...int) {
             this.ContentType("text/plain")
         }
         this.StatusCode = b.(int)
-        body = StatusCodes[b.(int)]
+        body = httphelp.StatusCodes[b.(int)]
     case string:
         if len(this.Get("Content-Type")) == 0 {
             this.ContentType("text/html")

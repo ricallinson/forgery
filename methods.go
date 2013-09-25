@@ -1,31 +1,5 @@
 package f
 
-var methods = []string{
-    "get",
-    "post",
-    "put",
-    "head",
-    "delete",
-    "options",
-    "trace",
-    "copy",
-    "lock",
-    "mkcol",
-    "move",
-    "propfind",
-    "proppatch",
-    "unlock",
-    "report",
-    "mkactivity",
-    "checkout",
-    "merge",
-    "m-search",
-    "notify",
-    "subscribe",
-    "unsubscribe",
-    "patch",
-}
-
 /*
     The method provides the routing functionality for POST requests to the given "path".
 */
