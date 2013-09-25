@@ -190,3 +190,33 @@ func (this *Request) AcceptsCharset(c string) (bool) {
 func (this *Request) AcceptsLanguage(l string) (bool) {
     return strings.Index(strings.ToLower(this.Get("Accept-Language")), strings.ToLower(l)) > -1
 }
+
+/*
+    WARNING: Not complete!
+    Check if the request is fresh - aka Last-Modified and/or the ETag still match, 
+    indicating that the resource is "fresh".
+*/
+func (this *Request) Fresh(s int) (bool) {
+
+    if m := this.Method; m != "GET" && m != "HEAD" {
+        return false
+    }
+
+    if (s >= 200 && s < 300) || 304 == s {
+        return false
+    }
+
+    /*
+        Real fresh test goes here.
+    */
+
+    return len(this.Header.Get("X-Fresh")) > 0 // Tmp for testing
+}
+
+/*
+    Check if the request is stale - aka Last-Modified and/or the ETag do not match, 
+    indicating that the resource is "stale".
+*/
+func (this *Request) Stale(s int) (bool) {
+    return this.Fresh(s) == false
+}
