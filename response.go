@@ -6,6 +6,7 @@ import(
     "html"
     "time"
     "strings"
+    "net/url"
     "net/http"
     "path/filepath"
     "encoding/json"
@@ -132,7 +133,7 @@ func (this *Response) Cookie(n string, i interface{}, o ...*http.Cookie) {
     }
 
     cookie.Name = n
-    cookie.Value = v
+    cookie.Value = url.QueryEscape(v)
 
     if cookie.Path == "" {
         cookie.Path = "/"
