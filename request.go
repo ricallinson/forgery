@@ -3,6 +3,7 @@ package f
 import(
     "regexp"
     "strings"
+    "net/url"
     "encoding/json"
     "github.com/ricallinson/stackr"
     "github.com/ricallinson/httphelp"
@@ -104,7 +105,7 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
 /*
     Contains the cookies sent by the user-agent.
 */
-func (this *Request) Cookie(n string, i ...*interface{}) (string) {
+func (this *Request) Cookie(n string, i ...interface{}) (string) {
     
     cookie, err := this.Request.Cookie(n)
 
@@ -113,30 +114,14 @@ func (this *Request) Cookie(n string, i ...*interface{}) (string) {
     }
 
     /*
-        If no interface was given then just return the Value.
+        Unescape the cookie.
     */
 
-    if len(i) == 0 {
-        return cookie.Value
+    v, e := url.QueryUnescape(cookie.Value)
+
+    if e != nil {
+        return ""
     }
-
-    json.Unmarshal([]byte(cookie.Value), i[0])
-
-    return ""
-}
-
-/*
-    Contains the signed cookies sent by the user-agent, unsigned and ready for use. 
-    Signed cookies are accessed by a different function to show developer intent, otherwise a 
-    malicious attack could be placed on `req.Cookie` values which are easy to spoof. 
-    Note that signing a cookie does not mean it is "hidden" nor encrypted, this simply 
-    prevents tampering as the secret used to sign is private.
-*/
-func (this *Request) SignedCookie(n string, i ...*interface{}) (string) {
-
-    v := this.Cookie(n)
-
-    v = this.app.Unsign(v, this.app.Get("secret"))
 
     /*
         If no interface was given then just return the Value.
@@ -148,7 +133,43 @@ func (this *Request) SignedCookie(n string, i ...*interface{}) (string) {
 
     json.Unmarshal([]byte(v), i[0])
 
-    return ""
+    return v
+}
+
+/*
+    Contains the signed cookies sent by the user-agent, unsigned and ready for use. 
+    Signed cookies are accessed by a different function to show developer intent, otherwise a 
+    malicious attack could be placed on `req.Cookie` values which are easy to spoof. 
+    Note that signing a cookie does not mean it is "hidden" nor encrypted, this simply 
+    prevents tampering as the secret used to sign is private.
+*/
+func (this *Request) SignedCookie(n string, i ...interface{}) (string) {
+
+    secret := this.app.Get("secret")
+
+    if secret == "" {
+        panic("f.Get(\"secret\") required for signed cookies")
+    }
+
+    v := this.Cookie(n)
+
+    /*
+        Unsign the cookie string value.
+    */
+
+    v = this.app.Unsign(v, secret)
+
+    /*
+        If no interface was given then just return the Value.
+    */
+
+    if len(i) == 0 {
+        return v
+    }
+
+    json.Unmarshal([]byte(v), i[0])
+
+    return v
 }
 
 /*

@@ -2,6 +2,7 @@ package f
 
 import(
     "bytes"
+    "strings"
     "testing"
     "net/url"
     "net/http"
@@ -63,8 +64,39 @@ func TestResponse(t *testing.T) {
 
     Describe("Cookie()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [foo=bar;]", func() {
+            res.Cookie("foo", "bar")
+            h := res.Get("Set-Cookie")
+            // AssertEqual(h, "")
+            AssertEqual(strings.Index(h, "foo=bar;") > -1, true)
+            AssertEqual(strings.Index(h, "Path=/;") > -1, true)
+        })
+
+        It("should return [{\"foo\":\"bar\"};]", func() {
+            res.Cookie("foo", map[string]string{"foo": "bar"})
+            h := res.Get("Set-Cookie")
+            // AssertEqual(h, "")
+            AssertEqual(strings.Index(h, "{\"foo\":\"bar\"};") > -1, true)
+            AssertEqual(strings.Index(h, "Path=/;") > -1, true)
+        })
+    })
+
+    Describe("SignedCookie()", func() {
+
+        It("should return [foo=bar;]", func() {
+            res.app.Set("secret", "word")
+            res.SignedCookie("foo", "bar")
+            h := res.Get("Set-Cookie")
+            AssertEqual(strings.Index(h, "foo=bar;") > -1, true)
+            AssertEqual(strings.Index(h, "Path=/;") > -1, true)
+        })
+
+        It("should return [{\"foo\":\"bar\"};]", func() {
+            res.app.Set("secret", "word")
+            res.SignedCookie("foo", map[string]string{"foo": "bar"})
+            h := res.Get("Set-Cookie")
+            AssertEqual(strings.Index(h, "{\"foo\":\"bar\"};") > -1, true)
+            AssertEqual(strings.Index(h, "Path=/;") > -1, true)
         })
     })
 

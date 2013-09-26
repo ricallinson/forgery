@@ -122,7 +122,11 @@ func (this *Response) Cookie(n string, i interface{}, o ...*http.Cookie) {
     var v string
     switch i.(type) {
     default:
-        v = this.json(i)
+        b, e := json.Marshal(i)
+        v = string(b)
+        if e != nil {
+            v = e.Error()
+        }
     case string:
         v = i.(string)
     }
@@ -167,7 +171,8 @@ func (this *Response) SignedCookie(n string, i interface{}, o ...*http.Cookie) {
     var v string
     switch i.(type) {
     default:
-        v = this.json(i)
+        b, _ := json.Marshal(i)
+        v = string(b)
     case string:
         v = i.(string)
     }

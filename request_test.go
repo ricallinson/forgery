@@ -23,7 +23,9 @@ func TestRequest(t *testing.T) {
                     Header: map[string][]string{},
                 },
             },
-            &Server{},
+            &Server{
+                settings: map[string]string{},
+            },
         )
         req.res = &Response{
             Response: &stackr.Response{
@@ -53,6 +55,42 @@ func TestRequest(t *testing.T) {
                 app,
             )
             AssertEqual(req.Ips[1], "129.78.64.103")
+        })
+    })
+
+    Describe("Cookie()", func() {
+
+        It("should return [bar]", func() {
+            req.Header.Set("Cookie", "foo=bar;")
+            f := req.Cookie("foo")
+            AssertEqual(f, "bar")
+        })
+
+        It("should return [bar]", func() {
+            req.Header.Set("Cookie", "foo=" + url.QueryEscape("{\"foo\":\"bar\"}"))
+            var f map[string]interface{}
+            t := req.Cookie("foo", &f)
+            AssertEqual(t, "{\"foo\":\"bar\"}")
+            AssertEqual(f["foo"], "bar")
+        })
+    })
+
+    Describe("SignedCookie()", func() {
+
+        It("should return [bar]", func() {
+            req.app.Set("secret", "word")
+            req.Header.Set("Cookie", "foo=bar;")
+            f := req.SignedCookie("foo")
+            AssertEqual(f, "bar")
+        })
+
+        It("should return [bar]", func() {
+            req.app.Set("secret", "word")
+            req.Header.Set("Cookie", "foo=" + url.QueryEscape("{\"foo\":\"bar\"}"))
+            var f map[string]interface{}
+            t := req.SignedCookie("foo", &f)
+            AssertEqual(t, "{\"foo\":\"bar\"}")
+            AssertEqual(f["foo"], "bar")
         })
     })
 
