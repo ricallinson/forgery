@@ -22,7 +22,7 @@ Forgery is a minimal and flexible golang web application framework, providing a 
 
 * Build on [Stackr](https://github.com/ricallinson/stackr)
 * No robust routing (yet)
-* HTTP helpers (redirection, etc)
+* HTTP helpers (redirection, caching, etc)
 * View system supporting 1 template engine (hopefully more will come)
 * No content negotiation (tbd)
 * Focus on high performance

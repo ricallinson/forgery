@@ -72,6 +72,14 @@ func TestResponse(t *testing.T) {
             AssertEqual(strings.Index(h, "Path=/;") > -1, true)
         })
 
+        It("should return [Path=/foo]", func() {
+            res.Cookie("foo", "bar", &http.Cookie{Path: "/foo"})
+            h := res.Get("Set-Cookie")
+            // AssertEqual(h, "")
+            AssertEqual(strings.Index(h, "foo=bar;") > -1, true)
+            AssertEqual(strings.Index(h, "Path=/foo;") > -1, true)
+        })
+
         It("should return [{\"foo\":\"bar\"};]", func() {
             res.Cookie("foo", map[string]string{"foo": "bar"})
             h := res.Get("Set-Cookie")
@@ -102,8 +110,33 @@ func TestResponse(t *testing.T) {
 
     Describe("ClearCookie()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [foo=]", func() {
+            res.ClearCookie("foo")
+            h := res.Get("Set-Cookie")
+            AssertEqual(strings.Index(h, "Path=/;") > -1, true)
+            AssertEqual(strings.Index(h, "Max-Age=0") > -1, true)
+        })
+
+        It("should return [Path=/foo]", func() {
+            res.ClearCookie("foo", &http.Cookie{Path: "/foo"})
+            h := res.Get("Set-Cookie")
+            // AssertEqual(h, "")
+            AssertEqual(strings.Index(h, "Path=/foo;") > -1, true)
+            AssertEqual(strings.Index(h, "Max-Age=0") > -1, true)
+        })
+
+        It("should return [foo=bar]", func() {
+
+            /*
+                If the cookie has already been set, it cannot be deleted.
+            */
+
+            res.Cookie("foo", "bar")
+            res.ClearCookie("foo")
+            h := res.Get("Set-Cookie")
+            AssertEqual(strings.Index(h, "foo=bar;") > -1, true)
+            AssertEqual(strings.Index(h, "Path=/;") > -1, true)
+            AssertEqual(strings.Index(h, "Max-Age=0") > -1, false)
         })
     })
 

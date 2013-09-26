@@ -60,6 +60,11 @@ func TestRequest(t *testing.T) {
 
     Describe("Cookie()", func() {
 
+        It("should return []", func() {
+            f := req.Cookie("foo")
+            AssertEqual(f, "")
+        })
+
         It("should return [bar]", func() {
             req.Header.Set("Cookie", "foo=bar;")
             f := req.Cookie("foo")

@@ -196,10 +196,15 @@ func (this *Response) ClearCookie(n string, o ...*http.Cookie) {
 
     if len(o) == 1 {
         opt = o[0]
+    } else {
+        opt = &http.Cookie{}
     }
 
     opt.MaxAge = -1
-    opt.Path = "/"
+
+    if opt.Path == "" {
+        opt.Path = "/"
+    }
 
     this.Cookie(n, "", opt)
 }
