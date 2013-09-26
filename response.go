@@ -4,7 +4,9 @@ import(
     "fmt"
     "mime"
     "html"
+    "time"
     "strings"
+    "net/http"
     "path/filepath"
     "encoding/json"
     "github.com/ricallinson/stackr"
@@ -61,9 +63,8 @@ func createResponse(res *stackr.Response, next func(), app *Server) (*Response) 
 /*
     Chainable alias of stackr's "res.StatusCode=".
 */
-func (this *Response) Status(c int) (*Response) {
+func (this *Response) Status(c int) {
     this.StatusCode = c
-    return this
 }
 
 /*
@@ -77,29 +78,124 @@ func (this *Response) Set(f string, v string) {
     Get the case-insensitive response header "field".
 */
 func (this *Response) Get(f string) (string) {
-
-    /*
-        Possible future bug.
-        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
-        Message headers are case-insensitive.
-    */
-
     return this.Writer.Header().Get(f)
 }
 
 /*
     Set cookie "name" to "value", where "value" may be a string or interface 
     converted to JSON. The "path" option defaults to "/".
+
+    Set cookie `name` to `val`, with the given `options`.
+
+    Options:
+
+        - `maxAge`   max-age in milliseconds, converted to `expires`
+        - `signed`   sign the cookie
+        - `path`     defaults to "/"
+
+    Examples:
+
+        // "Remember Me" for 15 minutes
+        res.Cookie("rememberme", "1", &httpCookie{ expires: new Date(Date.now() + 900000), httpOnly: true });
+
+        // save as above
+        res.Cookie("rememberme", "1", &httpCookie{ maxAge: 900000, httpOnly: true })
 */
-func (this *Response) Cookie(n string, v string, opt ...interface{}) {
-    panic(halt)
+func (this *Response) Cookie(n string, i interface{}, o ...*http.Cookie) {
+
+    var cookie *http.Cookie
+
+    /*
+        If we were given cookie options use them.
+    */
+
+    if len(o) == 1 {
+        cookie = o[0]
+    } else {
+        cookie = &http.Cookie{}
+    }
+
+    /*
+        Convert the given interface to a string so it can be used as a cookie value.
+    */
+
+    var v string
+    switch i.(type) {
+    default:
+        v = this.json(i)
+    case string:
+        v = i.(string)
+    }
+
+    cookie.Name = n
+    cookie.Value = v
+
+    if cookie.Path == "" {
+        cookie.Path = "/"
+    }
+
+    if cookie.MaxAge == 0 {
+        // max-age in milliseconds, converted to `expires`
+        // TODO: Check the timing here.
+        cookie.Expires = time.Now().Add(time.Duration(cookie.MaxAge) * (time.Millisecond * time.Microsecond))
+        cookie.MaxAge = cookie.MaxAge / 1000
+    }
+
+    // cookie.Domain = ""
+    // cookie.Secure = false
+    // cookie.HttpOnly = false
+
+    /*
+        Possible bug if headers are already sent.
+    */
+
+    http.SetCookie(this.Writer, cookie)
+}
+
+func (this *Response) SignedCookie(n string, i interface{}, o ...*http.Cookie) {
+
+    secret := this.app.Get("secret")
+
+    if secret == "" {
+        panic("f.Get(\"secret\") required for signed cookies")
+    }
+
+    /*
+        Convert the given interface to a string so it can be signed.
+    */
+
+    var v string
+    switch i.(type) {
+    default:
+        v = this.json(i)
+    case string:
+        v = i.(string)
+    }
+
+    /*
+        Sign the cookie string value.
+    */
+
+    v = this.app.Sign(v, secret)
+
+    this.Cookie(n, v, o...)
 }
 
 /*
     Clear cookie "name". The "path" option defaults to "/".
 */
-func (this *Response) ClearCookie(n string, opt ...interface{}) {
-    panic(halt)
+func (this *Response) ClearCookie(n string, o ...*http.Cookie) {
+
+    var opt *http.Cookie
+
+    if len(o) == 1 {
+        opt = o[0]
+    }
+
+    opt.MaxAge = -1
+    opt.Path = "/"
+
+    this.Cookie(n, "", opt)
 }
 
 /*

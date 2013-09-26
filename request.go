@@ -3,6 +3,7 @@ package f
 import(
     "regexp"
     "strings"
+    "encoding/json"
     "github.com/ricallinson/stackr"
     "github.com/ricallinson/httphelp"
 )
@@ -103,8 +104,25 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
 /*
     Contains the cookies sent by the user-agent.
 */
-func (this *Request) Cookie(n string, i *interface{}) {
-    panic(halt)
+func (this *Request) Cookie(n string, i ...*interface{}) (string) {
+    
+    cookie, err := this.Request.Cookie(n)
+
+    if err != nil {
+        return ""
+    }
+
+    /*
+        If no interface was given then just return the Value.
+    */
+
+    if len(i) == 0 {
+        return cookie.Value
+    }
+
+    json.Unmarshal([]byte(cookie.Value), i[0])
+
+    return ""
 }
 
 /*
@@ -114,8 +132,23 @@ func (this *Request) Cookie(n string, i *interface{}) {
     Note that signing a cookie does not mean it is "hidden" nor encrypted, this simply 
     prevents tampering as the secret used to sign is private.
 */
-func (this *Request) SignedCookie(n string, i *interface{}) {
-    panic(halt)
+func (this *Request) SignedCookie(n string, i ...*interface{}) (string) {
+
+    v := this.Cookie(n)
+
+    v = this.app.Unsign(v, this.app.Get("secret"))
+
+    /*
+        If no interface was given then just return the Value.
+    */
+
+    if len(i) == 0 {
+        return v
+    }
+
+    json.Unmarshal([]byte(v), i[0])
+
+    return ""
 }
 
 /*
