@@ -353,9 +353,11 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
 }
 
 func (this *Server) Sign(v string, s string) (string) {
+
     return v
 }
 
 func (this *Server) Unsign(v string, s string) (string) {
+
     return v
 }

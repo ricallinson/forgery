@@ -142,7 +142,7 @@ func (this *Response) Cookie(n string, i interface{}, o ...*http.Cookie) {
     if cookie.MaxAge == 0 {
         // max-age in milliseconds, converted to `expires`
         // TODO: Check the timing here.
-        cookie.Expires = time.Now().Add(time.Duration(cookie.MaxAge) * (time.Millisecond * time.Microsecond))
+        cookie.Expires = time.Now().UTC().Add(time.Duration(cookie.MaxAge) * (time.Millisecond * time.Microsecond))
         cookie.MaxAge = cookie.MaxAge / 1000
     }
 

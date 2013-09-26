@@ -83,14 +83,14 @@ func TestRequest(t *testing.T) {
     Describe("SignedCookie()", func() {
 
         It("should return [bar]", func() {
-            req.app.Set("secret", "word")
+            req.app.Set("secret", "wordwordwordword")
             req.Header.Set("Cookie", "foo=bar;")
             f := req.SignedCookie("foo")
             AssertEqual(f, "bar")
         })
 
         It("should return [bar]", func() {
-            req.app.Set("secret", "word")
+            req.app.Set("secret", "wordwordwordword")
             req.Header.Set("Cookie", "foo=" + url.QueryEscape("{\"foo\":\"bar\"}"))
             var f map[string]interface{}
             t := req.SignedCookie("foo", &f)

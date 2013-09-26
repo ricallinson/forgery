@@ -92,17 +92,19 @@ func TestResponse(t *testing.T) {
     Describe("SignedCookie()", func() {
 
         It("should return [foo=bar;]", func() {
-            res.app.Set("secret", "word")
+            res.app.Set("secret", "wordwordwordword")
             res.SignedCookie("foo", "bar")
             h := res.Get("Set-Cookie")
+            // AssertEqual(h, "")
             AssertEqual(strings.Index(h, "foo=bar;") > -1, true)
             AssertEqual(strings.Index(h, "Path=/;") > -1, true)
         })
 
         It("should return [{\"foo\":\"bar\"};]", func() {
-            res.app.Set("secret", "word")
+            res.app.Set("secret", "wordwordwordword")
             res.SignedCookie("foo", map[string]string{"foo": "bar"})
             h := res.Get("Set-Cookie")
+            // AssertEqual(h, "")
             AssertEqual(strings.Index(h, "foo=%7B%22foo%22%3A%22bar%22%7D;") > -1, true)
             AssertEqual(strings.Index(h, "Path=/;") > -1, true)
         })

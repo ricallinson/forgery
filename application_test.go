@@ -265,5 +265,16 @@ func TestApplication(t *testing.T) {
         })
     })
 
+    Describe("Sign(), Unsign()", func() {
+
+        It("should return [true]", func() {
+            f := CreateServer()
+            k := "wordwordwordword"
+            s := f.Sign("1234", k)
+            u := f.Unsign(s, k)
+            AssertEqual(u, "1234")
+        })
+    })
+
     Report(t)
 }
