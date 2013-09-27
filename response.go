@@ -442,7 +442,7 @@ func (this *Response) Jsonp(i interface{}, s ...int) {
     quality values, otherwise the first callback is invoked. When no match is performed 
     the server responds with 406 "Not Acceptable", or invokes the "default" callback.
 */
-func (this *Response) Format(i interface{}) {
+func (this *Response) Format(opt map[string]func()) {
     panic(halt)
 }
 
