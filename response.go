@@ -182,7 +182,7 @@ func (this *Response) SignedCookie(n string, i interface{}, o ...*http.Cookie) {
         Encrypt the cookie string value.
     */
 
-    v = Encrypt(v, secret)
+    v = Sign(v, secret)
 
     this.Cookie(n, v, o...)
 }

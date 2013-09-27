@@ -265,12 +265,12 @@ func TestApplication(t *testing.T) {
         })
     })
 
-    Describe("Encrypt(), Decrypt()", func() {
+    Describe("Sign(), Unsign()", func() {
 
         It("should return [true]", func() {
             k := "wordwordwordword"
-            s := Encrypt("1234", k)
-            u := Decrypt(s, k)
+            s := Sign("1234", k)
+            u := Unsign(s, k)
             AssertEqual(u, "1234")
         })
     })

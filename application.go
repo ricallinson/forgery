@@ -353,11 +353,11 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
     })
 }
 
-func Encrypt(v string, s string) (string) {
+func Sign(v string, s string) (string) {
     return v
 }
 
-func Decrypt(v string, s string) (string) {
+func Unsign(v string, s string) (string) {
     return v
 }
 

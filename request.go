@@ -159,7 +159,7 @@ func (this *Request) SignedCookie(n string, i ...interface{}) (string) {
         Decrypt the cookie string value.
     */
 
-    v = Decrypt(v, secret)
+    v = Unsign(v, secret)
 
     /*
         If no interface was given then just return the Value.
