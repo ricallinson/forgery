@@ -24,7 +24,7 @@ Forgery is a minimal and flexible golang web application framework, providing a 
 * No robust routing (yet)
 * HTTP helpers (redirection, caching, etc)
 * View system supporting 1 template engine (hopefully more will come)
-* No content negotiation (tbd)
+* Content negotiation is coming next!
 * Focus on high performance
 * Environment based configuration
 * High test coverage
