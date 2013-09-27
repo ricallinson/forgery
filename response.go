@@ -5,6 +5,7 @@ import(
     "mime"
     "html"
     "time"
+    "regexp"
     "strings"
     "net/url"
     "net/http"
@@ -448,8 +449,19 @@ func (this *Response) Format(i interface{}) {
 /*
     Add `field` to Vary. If already present in the Vary set, then this call is simply ignored.
 */
-func (this *Response) Vary() {
-    panic(halt)
+func (this *Response) Vary(field string) {
+    vary := this.Get("vary")
+    if len(vary) == 0 {
+        this.Set("Vary", field)
+        return
+    }
+    list := regexp.MustCompile(" *, *").Split(vary, -1)
+    for _, v := range list {
+        if v == field {
+            return
+        }
+    }
+    this.Set("Vary", vary + ", " + field)
 }
 
 /*

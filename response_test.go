@@ -478,8 +478,26 @@ func TestResponse(t *testing.T) {
 
     Describe("Vary()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [Accept]", func() {
+            res.Vary("Accept")
+            v := res.Get("Vary")
+            AssertEqual(v, "Accept")
+        })
+
+        It("should return [Accept, *]", func() {
+            res.Vary("Accept")
+            res.Vary("*")
+            v := res.Get("Vary")
+            AssertEqual(v, "Accept, *")
+        })
+
+        It("should return [Accept, *]", func() {
+            res.Vary("Accept")
+            res.Vary("*")
+            res.Vary("*")
+            res.Vary("Accept")
+            v := res.Get("Vary")
+            AssertEqual(v, "Accept, *")
         })
     })
 
