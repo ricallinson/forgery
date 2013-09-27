@@ -491,10 +491,15 @@ func (this *Response) Download(p string, opt ...interface{}) {
 }
 
 /*
-    Join the given "links" to populate the "Link" response header field.
+    Use the given "link", "rel" to populate the "Link" response header field.
+    If the filed is already set the given "link", "rel" will be appended.
 */
-func (this *Response) Links(l []string) {
-    panic(halt)
+func (this *Response) Links(link string, rel string) {
+    links := this.Get("Link")
+    if len(links) > 0 {
+        links = links + ", "
+    }
+    this.Set("Link", links + "<" + link + ">; rel=\"" + rel + "\"")
 }
 
 /*

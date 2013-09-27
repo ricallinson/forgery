@@ -462,8 +462,17 @@ func TestResponse(t *testing.T) {
 
     Describe("Links()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [<http://api.example.com/users?page=2>; rel=\"next\"]", func() {
+            res.Links("http://api.example.com/users?page=2", "next")
+            l := res.Get("Link")
+            AssertEqual(l, "<http://api.example.com/users?page=2>; rel=\"next\"")
+        })
+
+        It("should return [rel=\"next\", rel=\"last\"]", func() {
+            res.Links("http://api.example.com/users?page=2", "next")
+            res.Links("http://api.example.com/users?page=5", "last")
+            l := res.Get("Link")
+            AssertEqual(l, "<http://api.example.com/users?page=2>; rel=\"next\", <http://api.example.com/users?page=5>; rel=\"last\"")
         })
     })
 
