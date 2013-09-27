@@ -12,6 +12,7 @@ import(
     "os"
     "errors"
     "strings"
+    "net/url"
     "path/filepath"
     "encoding/base64"
     "github.com/ricallinson/stackr"
@@ -362,18 +363,19 @@ func Unsign(v string, s string) (string) {
 }
 
 /*
-    Encodes a value using base64.
+    Encodes a value using base64 and makes it URL safe.
 */
 func Encode(value string) string {
     encoded := make([]byte, base64.URLEncoding.EncodedLen(len(value)))
     base64.URLEncoding.Encode(encoded, []byte(value))
-    return string(encoded)
+    return url.QueryEscape(string(encoded))
 }
 
 /*
-    Decode decodes a cookie using base64.
+    Decode decodes a URL safe base64 value.
 */
 func Decode(value string) (string, error) {
+    value, _ = url.QueryUnescape(value)
     decoded := make([]byte, base64.URLEncoding.DecodedLen(len(value)))
     b, err := base64.URLEncoding.Decode(decoded, []byte(value))
     if err != nil {

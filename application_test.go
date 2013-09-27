@@ -280,7 +280,7 @@ func TestApplication(t *testing.T) {
         It("should return [true]", func() {
             e := Encode("1234")
             d, _ := Decode(e)
-            AssertEqual(e, "MTIzNA==")
+            AssertEqual(e, "MTIzNA%3D%3D")
             AssertEqual(d, "1234")
         })
     })

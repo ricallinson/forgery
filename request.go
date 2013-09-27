@@ -3,7 +3,7 @@ package f
 import(
     "regexp"
     "strings"
-    "net/url"
+    // "net/url"
     "encoding/json"
     "github.com/ricallinson/stackr"
     "github.com/ricallinson/httphelp"
@@ -118,8 +118,8 @@ func (this *Request) Cookie(n string, i ...interface{}) (string) {
     */
     var v string
     var e error
-    v, e = url.QueryUnescape(cookie.Value)
-    v, e = Decode(v)
+    // v, e = url.QueryUnescape(cookie.Value)
+    v, e = Decode(cookie.Value)
 
     if e != nil {
         return ""
