@@ -6,4 +6,5 @@ go:
     - tip
 install:
     - go get github.com/ricallinson/stackr
+    - go get github.com/ricallinson/httphelp
     - go get github.com/ricallinson/simplebdd
