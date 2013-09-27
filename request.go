@@ -53,6 +53,15 @@ type Request struct {
     // The currently matched Route containing several properties such as the 
     // route's original path string, the regexp generated, and so on.
     Route interface{}
+
+    //
+    accepted []string
+
+    //
+    acceptedLanguages []string
+
+    //
+    acceptedCharsets []string
 }
 
 /*
@@ -238,20 +247,6 @@ func (this *Request) Is(t string) (bool) {
 }
 
 /*
-    Check if the given "charset" is acceptable.
-*/
-func (this *Request) AcceptsCharset(c string) (bool) {
-    return strings.Index(strings.ToLower(this.Get("Accept-Charset")), strings.ToLower(c)) > -1
-}
-
-/*
-    Check if the given "lang" is acceptable.
-*/
-func (this *Request) AcceptsLanguage(l string) (bool) {
-    return strings.Index(strings.ToLower(this.Get("Accept-Language")), strings.ToLower(l)) > -1
-}
-
-/*
     WARNING: Not complete!
     Check if the request is fresh - aka Last-Modified and/or the ETag still match, 
     indicating that the resource is "fresh".
@@ -275,4 +270,65 @@ func (this *Request) Fresh() (bool) {
 */
 func (this *Request) Stale() (bool) {
     return this.Fresh() == false
+}
+
+/*
+    Check if the given "charset" is acceptable.
+*/
+func (this *Request) AcceptsCharset(c string) (bool) {
+    return strings.Index(strings.ToLower(this.Get("Accept-Charset")), strings.ToLower(c)) > -1
+}
+
+/*
+    Check if the given "lang" is acceptable.
+*/
+func (this *Request) AcceptsLanguage(l string) (bool) {
+    return strings.Index(strings.ToLower(this.Get("Accept-Language")), strings.ToLower(l)) > -1
+}
+
+/*
+    Return an slice of Accepted media types ordered from highest quality to lowest.
+*/
+func (this *Request) Accepted() ([]string) {
+    if this.accepted == nil {
+        a := this.Header.Get("Accept")
+        this.accepted = this.processAccepted(a)
+    }
+    return this.accepted
+}
+
+/*
+    Return an slice of Accepted languages ordered from highest quality to lowest.
+*/
+func (this *Request) AcceptedLanguages() ([]string) {
+    if this.acceptedLanguages == nil {
+        a := this.Header.Get("Accept-Language")
+        this.acceptedLanguages = this.processAccepted(a)
+    }
+    return this.acceptedLanguages
+}
+
+/*
+    Return an slice of Accepted charsets ordered from highest quality to lowest.
+*/
+func (this *Request) AcceptedCharsets() ([]string) {
+    if this.acceptedCharsets == nil {
+        a := this.Header.Get("Accept-Charset")
+        this.acceptedCharsets = this.processAccepted(a)
+    }
+    return this.acceptedCharsets
+}
+
+/*
+    Return an slice of "accepted" ordered from highest quality to lowest.
+*/
+func (this *Request) processAccepted(a string) (list []string) {
+    for _, accept := range httphelp.ParseAccept(a) {
+        if len(accept.SubType) > 0 {
+            list = append(list, accept.Type + "/" + accept.SubType)
+        } else {
+            list = append(list, accept.Type)
+        }
+    }
+    return
 }
