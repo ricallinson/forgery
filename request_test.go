@@ -66,7 +66,7 @@ func TestRequest(t *testing.T) {
         })
 
         It("should return [bar]", func() {
-            req.Header.Set("Cookie", "foo=YmFy;")
+            req.Header.Set("Cookie", "foo=YmFy")
             f := req.Cookie("foo")
             AssertEqual(f, "bar")
         })
@@ -84,14 +84,14 @@ func TestRequest(t *testing.T) {
 
         It("should return [bar]", func() {
             req.app.Set("secret", "wordwordwordword")
-            req.Header.Set("Cookie", "foo=YmFy;")
+            req.Header.Set("Cookie", "foo=YmFyLld2WHdGQVBpaDNuQllfWUJhWWp3MmlONmN6VTFqam5MNjU1ZHZrcnFjbE09")
             f := req.SignedCookie("foo")
             AssertEqual(f, "bar")
         })
 
         It("should return [bar]", func() {
             req.app.Set("secret", "wordwordwordword")
-            req.Header.Set("Cookie", "foo=eyJmb28iOiJiYXIifQ%3D%3D")
+            req.Header.Set("Cookie", "foo=eyJmb28iOiJiYXIifS5QU1hjUGdOS3NwZFR6Q3BmOW1qN2JFR2RTUUx3MU5nWTRkMkE2QXpFTktjPQ%3D%3D")
             var f map[string]interface{}
             t := req.SignedCookie("foo", &f)
             AssertEqual(t, "{\"foo\":\"bar\"}")

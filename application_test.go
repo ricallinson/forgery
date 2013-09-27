@@ -273,6 +273,18 @@ func TestApplication(t *testing.T) {
             u := Unsign(s, k)
             AssertEqual(u, "1234")
         })
+
+        It("should return []", func() {
+            k := "wordwordwordword"
+            u := Unsign("fake", k)
+            AssertEqual(u, "")
+        })
+
+        It("should return []", func() {
+            k := "wordwordwordword"
+            u := Unsign("fake.fake", k)
+            AssertEqual(u, "")
+        })
     })
 
     Describe("Encode(), Decode()", func() {
@@ -280,7 +292,7 @@ func TestApplication(t *testing.T) {
         It("should return [true]", func() {
             e := Encode("1234")
             d, _ := Decode(e)
-            AssertEqual(e, "MTIzNA%3D%3D")
+            AssertEqual(e, "MTIzNA==")
             AssertEqual(d, "1234")
         })
     })

@@ -12,11 +12,12 @@ import(
     "os"
     "errors"
     "strings"
-    "net/url"
+    // "net/url"
     "path/filepath"
     "encoding/base64"
     "github.com/ricallinson/stackr"
     "github.com/ricallinson/httphelp"
+    "crypto/sha256"
 )
 
 const (
@@ -355,27 +356,37 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
 }
 
 func Sign(v string, s string) (string) {
-    return v
+    hasher := sha256.New()
+    hasher.Write([]byte(v + s))
+    return v + "." + Encode(string(hasher.Sum(nil)))
 }
 
 func Unsign(v string, s string) (string) {
-    return v
+    i := strings.LastIndex(v, ".")
+    if i == -1 {
+        return ""
+    }
+    val := v[:i]
+    if Sign(val, s) != v {
+        return ""
+    }
+    return val
 }
 
 /*
-    Encodes a value using base64 and makes it URL safe.
+    Encodes a value using base64.
 */
 func Encode(value string) string {
     encoded := make([]byte, base64.URLEncoding.EncodedLen(len(value)))
     base64.URLEncoding.Encode(encoded, []byte(value))
-    return url.QueryEscape(string(encoded))
+    return string(encoded)
 }
 
 /*
-    Decode decodes a URL safe base64 value.
+    Decodes a value using base64.
 */
 func Decode(value string) (string, error) {
-    value, _ = url.QueryUnescape(value)
+    value = value
     decoded := make([]byte, base64.URLEncoding.DecodedLen(len(value)))
     b, err := base64.URLEncoding.Decode(decoded, []byte(value))
     if err != nil {

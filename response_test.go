@@ -96,7 +96,7 @@ func TestResponse(t *testing.T) {
             res.SignedCookie("foo", "bar")
             h := res.Get("Set-Cookie")
             // AssertEqual(h, "")
-            AssertEqual(strings.Index(h, "foo=YmFy;") > -1, true)
+            AssertEqual(strings.Index(h, "foo=YmFyLld2WHdGQVBpaDNuQllfWUJhWWp3MmlONmN6VTFqam5MNjU1ZHZrcnFjbE09;") > -1, true)
             AssertEqual(strings.Index(h, "Path=/;") > -1, true)
         })
 
@@ -105,7 +105,7 @@ func TestResponse(t *testing.T) {
             res.SignedCookie("foo", map[string]string{"foo": "bar"})
             h := res.Get("Set-Cookie")
             // AssertEqual(h, "")
-            AssertEqual(strings.Index(h, "foo=eyJmb28iOiJiYXIifQ%3D%3D;") > -1, true)
+            AssertEqual(strings.Index(h, "foo=eyJmb28iOiJiYXIifS5QU1hjUGdOS3NwZFR6Q3BmOW1qN2JFR2RTUUx3MU5nWTRkMkE2QXpFTktjPQ%3D%3D;") > -1, true)
             AssertEqual(strings.Index(h, "Path=/;") > -1, true)
         })
     })
