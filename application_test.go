@@ -265,14 +265,23 @@ func TestApplication(t *testing.T) {
         })
     })
 
-    Describe("Sign(), Unsign()", func() {
+    Describe("Encrypt(), Decrypt()", func() {
 
         It("should return [true]", func() {
-            f := CreateServer()
             k := "wordwordwordword"
-            s := f.Sign("1234", k)
-            u := f.Unsign(s, k)
+            s := Encrypt("1234", k)
+            u := Decrypt(s, k)
             AssertEqual(u, "1234")
+        })
+    })
+
+    Describe("Encode(), Decode()", func() {
+
+        It("should return [true]", func() {
+            e := Encode("1234")
+            d, _ := Decode(e)
+            AssertEqual(e, "MTIzNA==")
+            AssertEqual(d, "1234")
         })
     })
 

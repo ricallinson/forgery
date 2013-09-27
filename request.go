@@ -116,8 +116,10 @@ func (this *Request) Cookie(n string, i ...interface{}) (string) {
     /*
         Unescape the cookie.
     */
-
-    v, e := url.QueryUnescape(cookie.Value)
+    var v string
+    var e error
+    v, e = url.QueryUnescape(cookie.Value)
+    v, e = Decode(v)
 
     if e != nil {
         return ""
@@ -154,10 +156,10 @@ func (this *Request) SignedCookie(n string, i ...interface{}) (string) {
     v := this.Cookie(n)
 
     /*
-        Unsign the cookie string value.
+        Decrypt the cookie string value.
     */
 
-    v = this.app.Unsign(v, secret)
+    v = Decrypt(v, secret)
 
     /*
         If no interface was given then just return the Value.

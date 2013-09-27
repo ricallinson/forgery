@@ -133,7 +133,7 @@ func (this *Response) Cookie(n string, i interface{}, o ...*http.Cookie) {
     }
 
     cookie.Name = n
-    cookie.Value = url.QueryEscape(v)
+    cookie.Value = url.QueryEscape(Encode(v))
 
     if cookie.Path == "" {
         cookie.Path = "/"
@@ -179,10 +179,10 @@ func (this *Response) SignedCookie(n string, i interface{}, o ...*http.Cookie) {
     }
 
     /*
-        Sign the cookie string value.
+        Encrypt the cookie string value.
     */
 
-    v = this.app.Sign(v, secret)
+    v = Encrypt(v, secret)
 
     this.Cookie(n, v, o...)
 }
