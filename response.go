@@ -511,8 +511,8 @@ func (this *Response) Attachment(f ...string) {
     Transfer the file at the given path. Automatically defaults the Content-Type response 
     header field based on the filename's extension.
 */
-func (this *Response) Sendfile(p string, opt ...interface{}) {
-    panic(halt)
+func (this *Response) Sendfile(filename string, opt ...interface{}) {
+    http.ServeFile(this.Writer, this.req.Request.Request, filename)
 }
 
 /*
@@ -520,8 +520,13 @@ func (this *Response) Sendfile(p string, opt ...interface{}) {
     The Content-Disposition "filename=" parameter, aka the one that will appear in the browser 
     dialog is set to path by default, however you may provide an override filename.
 */
-func (this *Response) Download(p string, opt ...interface{}) {
-    panic(halt)
+func (this *Response) Download(path string, f ...string) {
+    filename := path
+    if len(f) == 1 {
+        filename = f[0]
+    }
+    this.Set("Content-Disposition", "attachment; filename=\"" + filepath.Base(filename) + "\"");
+    this.Sendfile(path)
 }
 
 /*
