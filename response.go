@@ -229,14 +229,20 @@ func (this *Response) Redirect(uri string, s ...int) {
 
     uri = this.Get("Location")
 
-    body := ""
+    var body string
 
-    if this.req.Accepts("text/plain") {
-        body = httphelp.StatusCodes[this.StatusCode] + ". Redirecting to " + uri;
-    } else if this.req.Accepts("text/html") {
-        u := html.EscapeString(uri)
-        body = "<p>" + httphelp.StatusCodes[this.StatusCode] + ". Redirecting to <a href=\"" + u + "\">" + u + "</a></p>";
-    }
+    this.Format(map[string]func() {
+        "text/plain": func() {
+            body = httphelp.StatusCodes[this.StatusCode] + ". Redirecting to " + uri;
+        },
+        "text/html": func() {
+            u := html.EscapeString(uri)
+            body = "<p>" + httphelp.StatusCodes[this.StatusCode] + ". Redirecting to <a href=\"" + u + "\">" + u + "</a></p>";
+        },
+        "default": func() {
+            body = ""
+        },
+    })
 
     this.Set("Content-Length", fmt.Sprint(len(body)))
 
@@ -456,6 +462,7 @@ func (this *Response) Format(opt map[string]func()) {
 
     if fn, ok := opt["default"]; ok {
         fn()
+        return
     }
 
     this.Send(406)
