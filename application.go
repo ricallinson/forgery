@@ -332,7 +332,13 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
         this.usedRouter = true
     }
 
-    this.Router.Verb(verb, path, funcs...)
+    route := Route{
+        Method: strings.ToUpper(verb),
+        Url: path,
+        Funcs: funcs,
+    }
+
+    this.Router.Routes = append(this.Router.Routes, route)
 }
 
 func Sign(v string, s string) (string) {

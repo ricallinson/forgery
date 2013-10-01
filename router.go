@@ -1,7 +1,6 @@
 package f
 
 import(
-    "strings"
     "github.com/ricallinson/stackr"
 )
 
@@ -54,15 +53,4 @@ func (this *Router) Middleware(app *Server) (func(req *stackr.Request, res *stac
 
 func (this *Router) Param(p string, fn func(*Request, *Response, func())) {
     this.Params[p] = fn
-}
-
-func (this *Router) Verb(verb string, path string, funcs ...func(*Request, *Response, func())) {
-
-    route := Route{
-        Method: strings.ToUpper(verb),
-        Url: path,
-        Funcs: funcs,
-    }
-
-    this.Routes = append(this.Routes, route)
 }
