@@ -426,8 +426,43 @@ func TestResponse(t *testing.T) {
 
     Describe("Format()", func() {
 
-        It("should return [skipped]", func() {
-            AssertEqual(true, true)
+        It("should return [true]", func() {
+            test := false
+            formats := map[string]func(){
+                "default": func() {
+                    test = true
+                },
+            }
+            res.Format(formats)
+            AssertEqual(test, true)
+        })
+
+        It("should return [406]", func() {
+            test := false
+            formats := map[string]func(){
+                "none": func() {
+                    test = true
+                },
+            }
+            res.Format(formats)
+            w := bytes.NewBuffer(mock.Written).String()
+            AssertEqual(res.StatusCode, 406)
+            AssertEqual(w, "Not Acceptable")
+        })
+
+        It("should return [text/html]", func() {
+            test := ""
+            formats := map[string]func(){
+                "default": func() {
+                    test = "default"
+                },
+                "text/html": func() {
+                    test = "text/html"
+                },
+            }
+            res.req.Header.Set("Accept", "text/html")
+            res.Format(formats)
+            AssertEqual(test, "text/html")
         })
     })
 

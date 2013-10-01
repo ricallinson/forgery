@@ -226,19 +226,6 @@ func (this *Request) Get(f string) (string) {
 }
 
 /*
-    Check if the given types are acceptable, returning the best match when true, 
-    otherwise undefined - in which case you should respond with 406 "Not Acceptable".
-*/
-func (this *Request) Accepts(t string) (bool) {
-    for _, v := range this.Accepted() {
-        if strings.ToLower(t) == v {
-            return true
-        }
-    }
-    return false
-}
-
-/*
     Check if the incoming request contains the "Content-Type" header field, and it matches the give mime "type".
 */
 func (this *Request) Is(t string) (bool) {
@@ -270,6 +257,19 @@ func (this *Request) Fresh() (bool) {
 */
 func (this *Request) Stale() (bool) {
     return this.Fresh() == false
+}
+
+/*
+    Check if the given types are acceptable, returning the best match when true, 
+    otherwise undefined - in which case you should respond with 406 "Not Acceptable".
+*/
+func (this *Request) Accepts(t string) (bool) {
+    for _, v := range this.Accepted() {
+        if strings.ToLower(t) == v {
+            return true
+        }
+    }
+    return false
 }
 
 /*

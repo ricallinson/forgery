@@ -443,7 +443,22 @@ func (this *Response) Jsonp(i interface{}, s ...int) {
     the server responds with 406 "Not Acceptable", or invokes the "default" callback.
 */
 func (this *Response) Format(opt map[string]func()) {
-    panic(halt)
+
+    this.Vary("Accept")
+
+    for key, fn := range opt {
+        if this.req.Accepts(key) {
+            this.ContentType(key)
+            fn()
+            return
+        }
+    }
+
+    if fn, ok := opt["default"]; ok {
+        fn()
+    }
+
+    this.Send(406)
 }
 
 /*
