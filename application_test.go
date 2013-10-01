@@ -101,7 +101,7 @@ func TestApplication(t *testing.T) {
 
         It("should return [true]", func() {
             s := CreateServer()
-            s.Router.Middleware()
+            s.Router.Middleware(&Server{})
             s.Param(":user", func(req *Request, res *Response, next func()){})
             _, ok := s.Router.Params[":user"]
             AssertEqual(ok, true)

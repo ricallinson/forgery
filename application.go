@@ -12,12 +12,11 @@ import(
     "os"
     "errors"
     "strings"
-    // "net/url"
+    "crypto/sha256"
     "path/filepath"
     "encoding/base64"
     "github.com/ricallinson/stackr"
     "github.com/ricallinson/httphelp"
-    "crypto/sha256"
 )
 
 const (
@@ -329,30 +328,11 @@ func (this *Server) All(path string, fn ...func(*Request, *Response, func())) {
 func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Response, func())) {
 
     if this.usedRouter == false {
-        this.Use("/", this.Router.Middleware())
+        this.Use(this.Router.Middleware(this))
         this.usedRouter = true
     }
 
-    verb = strings.ToUpper(verb)
-
-    /*
-        This is temporary code in place of a real URL router.
-    */
-
-    this.Use(path, func(req *stackr.Request, res *stackr.Response, next func()) {
-
-        if strings.ToUpper(req.Method) != verb {
-            return
-        }
-
-        for _, fn := range funcs {
-            freq := createRequest(req, this)
-            fres := createResponse(res, next, this)
-            freq.res = fres // Add the Response to the Request
-            fres.req = freq // Add the Request to the Response
-            fn(freq, fres, next)
-        }
-    })
+    this.Router.Verb(verb, path, funcs...)
 }
 
 func Sign(v string, s string) (string) {
