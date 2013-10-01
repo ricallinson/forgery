@@ -9,6 +9,7 @@ import(
     "strings"
     "net/url"
     "net/http"
+    "hash/crc32"
     "path/filepath"
     "encoding/json"
     "github.com/ricallinson/stackr"
@@ -309,6 +310,7 @@ func (this *Response) Location(uri string) {
 func (this *Response) Send(b interface{}, s ...int) {
 
     var body string
+    var length int
     var bytes []byte
 
     req := this.req
@@ -329,6 +331,7 @@ func (this *Response) Send(b interface{}, s ...int) {
         }
         this.StatusCode = b.(int)
         body = httphelp.StatusCodes[b.(int)]
+        length = len(body)
     case string:
         if len(this.Get("Content-Type")) == 0 {
             this.ContentType("text/html")
@@ -337,6 +340,7 @@ func (this *Response) Send(b interface{}, s ...int) {
             this.Charset = "utf-8"
         }
         body = b.(string)
+        length = len(body)
     case []byte:
         if len(this.Get("Content-Type")) == 0 {
             this.ContentType("text/html")
@@ -345,18 +349,20 @@ func (this *Response) Send(b interface{}, s ...int) {
             this.Charset = "utf-8"
         }
         bytes = b.([]byte)
+        length = len(bytes)
     }
 
     // Populate Content-Length
     if len(this.Get("Content-Length")) == 0 {
-        if len(bytes) > 0 {
-            this.Set("Content-Length", fmt.Sprint(len(bytes)))
-        } else {
-            this.Set("Content-Length", fmt.Sprint(len(body)))
-        }
+        this.Set("Content-Length", fmt.Sprint(length))
     }
 
     // ETag support
+    if this.app.Enabled("etag") && length > 1024 && req.Method == "GET" {
+        if this.Get("ETag") == "" {
+            this.Set("ETag", this.Etag(body))
+        }
+    }
 
     // Freshness
     if req.Fresh() {
@@ -378,6 +384,13 @@ func (this *Response) Send(b interface{}, s ...int) {
     }
 
     this.End(body)
+}
+
+/*
+    Return ETag for "body"
+*/
+func (this *Response) Etag(body string) (string) {
+    return fmt.Sprint(crc32.ChecksumIEEE([]byte(body)))
 }
 
 /*

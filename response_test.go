@@ -377,6 +377,14 @@ func TestResponse(t *testing.T) {
         })
     })
 
+    Describe("Etag()", func() {
+
+        It("should return [2356372769]", func() {
+            t := res.Etag("foo")
+            AssertEqual(t, "2356372769")
+        })
+    })
+
     Describe("json()", func() {
 
         It("should return [{\"foo\":\"bar\"}]", func() {
