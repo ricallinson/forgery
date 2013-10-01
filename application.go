@@ -270,16 +270,6 @@ func (this *Server) Engine(ext string, fn Renderer) {
 }
 
 /*
-    Map logic to route parameters. For example when ":user" is 
-    present in a route path you may map user loading logic to 
-    automatically provide req.Map["user"] to the route, or perform 
-    validations on the parameter input.
-*/
-func (this *Server) Param(p string, fn func(*Request, *Response, func())) {
-    this.Router.Param(p, fn)
-}
-
-/*
     Render a "view" responding with the rendered string. 
     This is the app-level variant of "res.render()", and otherwise behaves the same way.
 */
@@ -339,6 +329,16 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
     }
 
     this.Router.Routes = append(this.Router.Routes, route)
+}
+
+/*
+    Map logic to route parameters. For example when ":user" is 
+    present in a route path you may map user loading logic to 
+    automatically provide req.Map["user"] to the route, or perform 
+    validations on the parameter input.
+*/
+func (this *Server) Param(p string, fn func(*Request, *Response, func())) {
+    this.Router.Params[p] = fn
 }
 
 func Sign(v string, s string) (string) {

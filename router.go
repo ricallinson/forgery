@@ -50,7 +50,3 @@ func (this *Router) Middleware(app *Server) (func(req *stackr.Request, res *stac
         }
     }
 }
-
-func (this *Router) Param(p string, fn func(*Request, *Response, func())) {
-    this.Params[p] = fn
-}
