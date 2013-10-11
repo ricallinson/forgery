@@ -35,7 +35,7 @@ func (this *Router) Middleware(app *Server) (func(req *stackr.Request, res *stac
 
         for _, route := range this.Routes {
 
-            if req.Method == route.Method && req.OriginalUrl == route.Url {
+            if req.Method == route.Method && (req.OriginalUrl == route.Url || route.Url == "*") {
 
                 for _, fn := range route.Funcs {
                     freq := createRequest(req, app)
