@@ -1,6 +1,7 @@
 package f
 
 import(
+    "strings"
     "github.com/ricallinson/stackr"
 )
 
@@ -33,9 +34,15 @@ func (this *Router) Middleware(app *Server) (func(req *stackr.Request, res *stac
 
     return func(req *stackr.Request, res *stackr.Response, next func()) {
 
+        // relative to path
+        path := req.OriginalUrl
+        if i := strings.Index(path, "?"); i > 0 {
+            path = path[:i]
+        }
+
         for _, route := range this.Routes {
 
-            if req.Method == route.Method && (req.OriginalUrl == route.Url || route.Url == "*") {
+            if req.Method == route.Method && (path == route.Url || "*" == route.Url) {
 
                 for _, fn := range route.Funcs {
                     freq := createRequest(req, app)
