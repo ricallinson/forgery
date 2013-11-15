@@ -95,12 +95,21 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
 
     // Could have been set by middleware.
     if this.Body == nil {
+        // Is there a standard body parser in Go that can be used here?
+        // b, err := ioutil.ReadAll(this.Request.Request.Body);
         this.Body = map[string]string{}
     }
 
     // Could have been set by middleware.
     if this.Query == nil {
         this.Query = map[string]string{}
+        // Copy the first item for each key from this.Request.URL.Query() into this.Query
+        // This has a performance impact so is it worth it?
+        // The alternative is to access this.URL.Query() from this.Param() like so;
+        //     v, ok = this.URL.Query().Get(n)
+        for k, v := range this.URL.Query() {
+            this.Query[k] = v[0]
+        }
     }
 
     // Could have been set by middleware.
@@ -190,7 +199,7 @@ func (this *Request) SignedCookie(n string, i ...interface{}) (string) {
     * Body
     * Query
 
-    Direct access to req.body, req.params, and req.query should be favoured for clarity - 
+    Direct access to req.body, req.params, and req.query should be favored for clarity - 
     unless you truly accept input from each object.
 */
 func (this *Request) Param(n string) (string) {
