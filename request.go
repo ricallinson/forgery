@@ -95,9 +95,16 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
 
     // Could have been set by middleware.
     if this.Body == nil {
-        // Is there a standard body parser in Go that can be used here?
-        // b, err := ioutil.ReadAll(this.Request.Request.Body);
         this.Body = map[string]string{}
+        // Parse the form data if there was any.
+        this.ParseForm()
+        // Copy the first item for each key from this.Request.PostForm[] into this.Body
+        // This has a performance impact so is it worth it?
+        // The alternative is to access this.PostForm[] from this.Param() like so;
+        //     v, ok = this.PostForm[n]
+        for k, v := range this.PostForm {
+            this.Body[k] = v[0]
+        }
     }
 
     // Could have been set by middleware.
