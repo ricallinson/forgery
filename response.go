@@ -52,15 +52,36 @@ func createResponse(res *stackr.Response, next func(), app *Server) (*Response) 
 
     this.Response = res
 
-    this.app = app
+    this.SetApplication(app)
 
-    this.next = next
+    this.SetNext(next)
 
     this.Charset = "utf-8"
 
     this.Locals = map[string]string{}
 
     return this
+}
+
+/*
+    Set the Application this Response will use.
+*/
+func (this *Response) SetApplication(app *Server) {
+    this.app = app
+}
+
+/*
+    Set the Request this Response will use.
+*/
+func (this *Response) SetRequest(req *Request) {
+    this.req = req
+}
+
+/*
+    Set the Next function this Response will use.
+*/
+func (this *Response) SetNext(next func()) {
+    this.next = next
 }
 
 /*

@@ -74,7 +74,7 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
 
     this.Request = req
 
-    this.app = app
+    this.SetApplication(app)
 
     if t, v := this.app.Get("trust proxy"), this.Header.Get("X-Forwarded-For"); len(t) > 0 && len(v) > 0 {
         s := regexp.MustCompile(" *, *").Split(v, -1)
@@ -125,6 +125,20 @@ func createRequest(req *stackr.Request, app *Server) (*Request) {
     }
 
     return this
+}
+
+/*
+    Set the Application this Request will use.
+*/
+func (this *Request) SetApplication(app *Server) {
+    this.app = app
+}
+
+/*
+    Set the Response this Response will use.
+*/
+func (this *Request) SetResponse(res *Response) {
+    this.res = res
 }
 
 /*

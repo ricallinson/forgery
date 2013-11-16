@@ -47,8 +47,8 @@ func (this *Router) Middleware(app *Server) (func(req *stackr.Request, res *stac
                 for _, fn := range route.Funcs {
                     freq := createRequest(req, app)
                     fres := createResponse(res, next, app)
-                    freq.res = fres // Add the Response to the Request
-                    fres.req = freq // Add the Request to the Response
+                    freq.SetResponse(fres) // Add the Response to the Request
+                    fres.SetRequest(freq) // Add the Request to the Response
                     fn(freq, fres, next)
                 }
 
