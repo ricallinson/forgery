@@ -284,11 +284,11 @@ func (this *Response) Location(uri string) {
     req := this.req
 
     /*
-        If the given uri == "back" then try and get the "Referrer"; or use "/"
+        If the given uri == "back" then try and get the "Referer"; or use "/"
     */
 
     if uri == "back" {
-        uri = req.Get("Referrer")
+        uri = req.Get("Referer")
         if uri == "" {
             uri = "/"
         }

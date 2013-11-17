@@ -242,7 +242,7 @@ func (this *Request) Param(n string) (string) {
 }
 
 /*
-    Get the case-insensitive request header field. The Referrer and Referer fields are interchangeable.
+    Get the case-insensitive request header field.
 */
 func (this *Request) Get(f string) (string) {
 
@@ -290,8 +290,8 @@ func (this *Request) Stale() (bool) {
 }
 
 /*
-    Check if the given types are acceptable, returning the best match when true, 
-    otherwise undefined - in which case you should respond with 406 "Not Acceptable".
+    Check if the given type is acceptable, returning true or false - 
+    in which case you should respond with 406 "Not Acceptable".
 */
 func (this *Request) Accepts(t string) (bool) {
     for _, v := range this.Accepted() {

@@ -17,7 +17,7 @@ Forgery is a minimal and flexible golang web application framework, providing a 
         app.Get("/", func(req *f.Request, res *f.Response, next func()) {
             res.Send("Hello world.")
         })
-        app.Listen(300)
+        app.Listen(3000)
     }
 
 * Build on [Stackr](https://github.com/ricallinson/stackr)

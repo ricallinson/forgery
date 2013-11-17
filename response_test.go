@@ -237,7 +237,7 @@ func TestResponse(t *testing.T) {
         })
 
         It("should return [http://www.foo.com/]", func() {
-            res.req.Header.Set("Referrer", "http://www.foo.com/")
+            res.req.Header.Set("Referer", "http://www.foo.com/")
             res.Location("back")
             AssertEqual(res.Get("location"), "http://www.foo.com/")
         })
