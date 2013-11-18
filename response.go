@@ -342,32 +342,31 @@ func (this *Response) Send(b interface{}, s ...int) {
         this.StatusCode = s[0]
     }
 
+    // If there is no charset default to "utf-8"
+    if len(this.Charset) == 0 {
+        this.Charset = "utf-8"
+    }
+
     switch b.(type) {
     default: // JSON
         this.Json(b, s...)
         return
     case int: // Status Code
         if len(this.Get("Content-Type")) == 0 {
-            this.ContentType("text/plain")
+            this.ContentType("text/plain; charset=" + this.Charset)
         }
         this.StatusCode = b.(int)
         body = httphelp.StatusCodes[b.(int)]
         length = len(body)
     case string:
         if len(this.Get("Content-Type")) == 0 {
-            this.ContentType("text/html")
-        }
-        if len(this.Charset) == 0 {
-            this.Charset = "utf-8"
+            this.ContentType("text/html; charset=" + this.Charset)
         }
         body = b.(string)
         length = len(body)
     case []byte:
         if len(this.Get("Content-Type")) == 0 {
-            this.ContentType("text/html")
-        }
-        if len(this.Charset) == 0 {
-            this.Charset = "utf-8"
+            this.ContentType("text/html; charset=" + this.Charset)
         }
         bytes = b.([]byte)
         length = len(bytes)
@@ -376,6 +375,11 @@ func (this *Response) Send(b interface{}, s ...int) {
     // Populate Content-Length
     if len(this.Get("Content-Length")) == 0 {
         this.Set("Content-Length", fmt.Sprint(length))
+    }
+
+    // Populate X-Powered-By
+    if this.app.Enabled("x-powered-by") {
+        this.Set("X-Powered-By", "Forgery")
     }
 
     // ETag support
