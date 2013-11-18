@@ -66,9 +66,9 @@ func createResponse(res *stackr.Response, next func(), app *Server) (*Response) 
 /*
     Return a clone of the this Response.
 */
-func (this *Response) Clone(req *Request) (*Response) {
+func (this *Response) Clone() (*Response) {
     r := createResponse(this.Response, this.next, this.app)
-    r.SetRequest(req)
+    r.SetRequest(this.req)
     return r
 }
 
