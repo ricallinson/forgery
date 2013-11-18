@@ -52,15 +52,24 @@ func createResponse(res *stackr.Response, next func(), app *Server) (*Response) 
 
     this.Response = res
 
-    this.SetApplication(app)
-
     this.SetNext(next)
+
+    this.SetApplication(app)
 
     this.Charset = "utf-8"
 
     this.Locals = map[string]string{}
 
     return this
+}
+
+/*
+    Return a clone of the this Response.
+*/
+func (this *Response) Clone(req *Request) (*Response) {
+    r := createResponse(this.Response, this.next, this.app)
+    r.SetRequest(req)
+    return r
 }
 
 /*
