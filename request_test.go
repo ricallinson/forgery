@@ -2,6 +2,7 @@ package f
 
 import(
     // "fmt"
+    // "strconv"
     "testing"
     "net/url"
     "net/http"
@@ -223,7 +224,26 @@ func TestRequest(t *testing.T) {
             AssertEqual(a, true)
         })
     })
-    
+
+    Describe("Subdomains()", func() {
+
+        It("should return [0]", func() {
+            req.app.Set("subdomain offset", "2")
+            a := req.Subdomains()
+            AssertEqual(len(a), 0)
+        })
+
+        It("should return [a, b, c]", func() {
+            req.app.Set("subdomain offset", "2")
+            req.Host = "a.b.c.domain.com"
+            a := req.Subdomains()
+            AssertEqual(a[0], "c")
+            AssertEqual(a[1], "b")
+            AssertEqual(a[2], "a")
+            AssertEqual(len(a), 3)
+        })
+    })
+
     Describe("AcceptsCharset()", func() {
 
         It("should return [true]", func() {

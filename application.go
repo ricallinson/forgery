@@ -92,32 +92,22 @@ func (this *Server) defaultConfiguration() {
         this.Set("env", "development"); 
     }
 
-    // debug("booting in %s mode", this.get("env"));
-
-    // implicit middleware
-    // this.Use(connect.query());
-    // this.Use(middleware.init(this));
+    // debug("booting in %s mode", this.Get("env"));
 
     // router
     // this.Enabled("case sensitive routing");
     // this.Enabled("strict routing");
 
-    // setup locals
-    // this.locals = locals(this);
-
-    // default locals
-    // this.locals.settings = this.settings;
-
     // default configuration
     this.Configure(func() {
-        // this.Set("subdomain offset", "2");
-        this.Set("views", filepath.Join(cwd, "views"));
-        this.Set("jsonp callback name", "callback");
+        this.Set("subdomain offset", "2")
+        this.Set("views", filepath.Join(cwd, "views"))
+        this.Set("jsonp callback name", "callback")
         this.Set("app path", "/")
     })
 
     this.Configure("development", func() {
-        this.Set("json spaces", "2")
+        // this.Set("json spaces", "2")
     })
 
     this.Configure("production", func() {

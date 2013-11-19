@@ -2,6 +2,7 @@ package f
 
 import(
     "regexp"
+    "strconv"
     "strings"
     "net/url"
     "encoding/json"
@@ -287,6 +288,19 @@ func (this *Request) Fresh() (bool) {
 */
 func (this *Request) Stale() (bool) {
     return this.Fresh() == false
+}
+
+/*
+    Return subdomains as a slice of strings.
+*/
+func (this *Request) Subdomains() ([]string) {
+    offset, _ := strconv.Atoi(this.app.Get("subdomain offset"))
+    subs := strings.Split(this.Host, ".")
+    end := len(subs) - offset
+    if end > 0 {
+        return stringSliceReverse(subs[:end])
+    }
+    return []string{}
 }
 
 /*
