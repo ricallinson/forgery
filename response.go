@@ -104,7 +104,11 @@ func (this *Response) Status(c int) {
    Set header "field" to "value".
 */
 func (this *Response) Set(f string, v string) {
-	this.SetHeader(f, v)
+	if v == "" {
+		this.RemoveHeader(f)
+	} else {
+		this.SetHeader(f, v)
+	}
 }
 
 /*
