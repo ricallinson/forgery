@@ -5,6 +5,11 @@ import (
 )
 
 /*
+   Convenience attribute for accessing "stackr.ErrorHandler".
+*/
+var ErrorHandler = stackr.ErrorHandler
+
+/*
    Convenience attribute for accessing "stackr.Favicon".
 */
 var Favicon = stackr.Favicon
