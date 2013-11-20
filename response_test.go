@@ -392,6 +392,14 @@ func TestResponse(t *testing.T) {
 			j := res.json(map[string]string{"foo": "bar"})
 			AssertEqual(j, "{\"foo\":\"bar\"}")
 		})
+
+		It("should return [{\"foo\":\"bar\"}]", func() {
+			res.Charset = ""
+			res.app.Set("env", "development")
+			res.app.Set("json spaces", "  ")
+			j := res.json(map[string]string{"foo": "bar"})
+			AssertEqual(j, "{\n  \"foo\": \"bar\"\n}")
+		})
 	})
 
 	Describe("Json()", func() {

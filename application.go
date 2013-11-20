@@ -105,7 +105,7 @@ func (this *Server) defaultConfiguration() {
 	})
 
 	this.Configure("development", func() {
-		// this.Set("json spaces", "2")
+		this.Set("json spaces", "  ")
 	})
 
 	this.Configure("production", func() {

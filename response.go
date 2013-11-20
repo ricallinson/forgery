@@ -441,8 +441,15 @@ func (this *Response) json(i interface{}) string {
 	if len(this.Charset) == 0 {
 		this.Charset = "utf-8"
 	}
-	b, err := json.Marshal(i)
-	if err != nil {
+	var b []byte
+	var e error
+	if this.app.Get("env") == "development" {
+		b, e = json.MarshalIndent(i, "", this.app.Get("json spaces"))
+	} else {
+		b, e = json.Marshal(i)
+	}
+	// If there was an error return an empty string.
+	if e != nil {
 		return ""
 	}
 	return string(b)
