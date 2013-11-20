@@ -2,7 +2,7 @@ package f
 
 import (
 	"encoding/json"
-	"github.com/ricallinson/httphelp"
+	"github.com/ricallinson/httputils"
 	"github.com/ricallinson/stackr"
 	"net/url"
 	"regexp"
