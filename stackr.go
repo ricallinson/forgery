@@ -20,6 +20,11 @@ var Favicon = stackr.Favicon
 var Logger = stackr.Logger
 
 /*
+   Convenience attribute for accessing "stackr.MethodOverride".
+*/
+var MethodOverride = stackr.MethodOverride
+
+/*
    Convenience attribute for accessing "stackr.ResponseTime".
 */
 var ResponseTime = stackr.ResponseTime
