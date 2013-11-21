@@ -310,9 +310,9 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
 		this.usedRouter = true
 	}
 
-	route := Route{
+	route := &Route{
 		Method: strings.ToUpper(verb),
-		Url:    path,
+		Path:    path,
 		Funcs:  funcs,
 	}
 
