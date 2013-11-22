@@ -14,7 +14,6 @@ import (
 	"github.com/ricallinson/stackr"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 const (
@@ -51,10 +50,9 @@ type Server struct {
    * "env" Environment mode, defaults to $GO_ENV or "development"
    * "trust proxy" Enables reverse proxy support, disabled by default
    * "jsonp callback name" Changes the default callback name of "?callback="
-   * X "json replacer" JSON replacer callback, null by default
-   * X "json spaces" JSON response spaces for formatting, defaults to 2 in development, 0 in production
-   * X "case sensitive routing" Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as the same
-   * X "strict routing" Enable strict routing, by default "/foo" and "/foo/" are treated the same by the router
+   * "json spaces" JSON response spaces for formatting, defaults to 2 in development, 0 in production
+   * "case sensitive routing" Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as the same
+   * "strict routing" Enable strict routing, by default "/foo" and "/foo/" are treated the same by the router
    * X "view cache" Enables view template compilation caching, enabled in production by default
    * "view engine" The default engine extension to use when omitted
    * "views" The view directory path, defaulting to "./views"
@@ -89,12 +87,6 @@ func (this *Server) defaultConfiguration() {
 	if this.Get("env") == "" {
 		this.Set("env", "development")
 	}
-
-	// debug("booting in %s mode", this.Get("env"));
-
-	// router
-	// this.Enabled("case sensitive routing");
-	// this.Enabled("strict routing");
 
 	// default configuration
 	this.Configure(func() {
@@ -306,17 +298,13 @@ func (this *Server) All(path string, fn ...func(*Request, *Response, func())) {
 func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Response, func())) {
 
 	if this.usedRouter == false {
+		this.Router.CaseSensitive = this.Enabled("case sensitive routing")
+		this.Router.Strict = this.Enabled("strict routing")
 		this.Use(this.Router.Middleware(this))
 		this.usedRouter = true
 	}
 
-	route := &Route{
-		Method: strings.ToUpper(verb),
-		Path:    path,
-		Funcs:  funcs,
-	}
-
-	this.Router.Routes = append(this.Router.Routes, route)
+	this.Router.AddRoute(verb, path, funcs...)
 }
 
 /*
@@ -326,5 +314,5 @@ func (this *Server) Verb(verb string, path string, funcs ...func(*Request, *Resp
    validations on the parameter input.
 */
 func (this *Server) Param(p string, fn func(*Request, *Response, func())) {
-	this.Router.Params[p] = fn
+	this.Router.AddParamFunc(p, fn)
 }

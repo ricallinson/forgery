@@ -60,6 +60,12 @@ func TestResponse(t *testing.T) {
 			res.Set("foo", "bar")
 			AssertEqual(res.Get("foo"), "bar")
 		})
+
+		It("should clear the header", func() {
+			res.Set("foo", "bar")
+			res.Set("foo", "")
+			AssertEqual(res.Get("foo"), "")
+		})
 	})
 
 	Describe("Cookie()", func() {
