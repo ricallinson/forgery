@@ -74,20 +74,38 @@ func (this *Router) executeRouteFuncs(req *Request, res *Response, next func(), 
 	return false
 }
 
+func (this *Router) handle(req *Request, res *Response, next func()) {
+
+	// Relative to path only so remove the query string.
+	path := req.OriginalUrl
+	if i := strings.Index(path, "?"); i > 0 {
+		path = path[:i]
+	}
+
+	for _, route := range this.Routes {
+		// If the route matches use it.
+		if params, ok := route.Match(req.Method, path); ok {
+			// Set the route "params" found in the path.
+			req.Params = params
+			// Call "param" functions if they are defined.
+			// If it returns true then the connection has closed so stop processing.
+			if this.executeParamFuncs(req, res, next) {
+				return
+			}
+			// Call "route" functions if they are defined.
+			// If it returns true then the connection has closed so stop processing.
+			if this.executeRouteFuncs(req, res, next, route) {
+				return
+			}
+		}
+	}
+}
+
 func (this *Router) Middleware(app *Server) func(req *stackr.Request, res *stackr.Response, next func()) {
 
 	this.ParamFuncs = map[string]func(*Request, *Response, func()){}
 
-	/*
-		This func is in the serving path so has to be super fast!
-	*/
 	return func(req *stackr.Request, res *stackr.Response, next func()) {
-
-		// Relative to path only so remove the query string.
-		path := req.OriginalUrl
-		if i := strings.Index(path, "?"); i > 0 {
-			path = path[:i]
-		}
 
 		// Create the f.Request and f.Response from stackr.Request and stackr.Response
 		freq := createRequest(req, app)
@@ -95,22 +113,7 @@ func (this *Router) Middleware(app *Server) func(req *stackr.Request, res *stack
 		freq.SetResponse(fres) // Add the Response to the Request
 		fres.SetRequest(freq)  // Add the Request to the Response
 
-		for _, route := range this.Routes {
-			// If the route matches use it.
-			if params, ok := route.Match(req.Method, path); ok {
-				// Set the route "params" found in the path.
-				freq.Params = params
-				// Call "param" functions if they are defined.
-				// If it returns true then the connection has closed so stop processing.
-				if this.executeParamFuncs(freq, fres, next) {
-					return
-				}
-				// Call "route" functions if they are defined.
-				// If it returns true then the connection has closed so stop processing.
-				if this.executeRouteFuncs(freq, fres, next, route) {
-					return
-				}
-			}
-		}
+		// Handle the request.
+		this.handle(freq, fres, next)
 	}
 }

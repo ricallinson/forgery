@@ -28,14 +28,6 @@ func TestRouter(t *testing.T) {
 			})
 			AssertEqual(len(r.Routes), 2)
 		})
-
-		It("should xxx", func() {
-			r := &Router{}
-			r.AddRoute("GET", "/", func(req *Request, res *Response, next func()) {
-				// ...
-			})
-			AssertEqual(len(r.Routes), 1)
-		})
 	})
 
 	Report(t)

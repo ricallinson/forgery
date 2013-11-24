@@ -49,12 +49,6 @@ func (this *Route) Match(method string, path string) (map[string]string, bool) {
 	// The string used for matching.
 	matchPath := path
 
-	// If the route is not case-sensitive then make the "path" to match lowercase.
-	// TODO: Check if a case-sensitive regex is faster.
-	if this.CaseSensitive == false {
-		matchPath = strings.ToLower(path)
-	}
-
 	// Test if this route matches the given "method" and "path".
 	if method != this.Method || this.Regex.MatchString(matchPath) == false {
 		return params, false
@@ -98,9 +92,9 @@ func (this *Route) CompileRegex(path string) *regexp.Regexp {
 		this.ParamNames[i] = name[1:]
 	}
 
-	// If the route is not case-sensitive then make it lowercase.
+	// If the route is not case-sensitive then add the regex flag for case-insensitive.
 	if this.CaseSensitive == false {
-		path = strings.ToLower(path)
+		path = "(?i)" + path
 	}
 
 	// For each param name found, replace it with a regex group.
