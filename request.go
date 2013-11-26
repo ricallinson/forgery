@@ -53,7 +53,7 @@ type Request struct {
 
 	// The currently matched Route containing several properties such as the
 	// route's original path string, the regexp generated, and so on.
-	Route interface{}
+	Route *Route
 
 	//
 	accepted []string

@@ -18,7 +18,7 @@ type Route struct {
 	Regex *regexp.Regexp
 
 	// Slice of functions
-	Funcs []func(*Request, *Response, func())
+	Callbacks []func(*Request, *Response, func())
 
 	// The slice of param names to return from the path.
 	ParamNames []string

@@ -35,7 +35,7 @@ func (this *Router) AddRoute(verb string, path string, funcs ...func(*Request, *
 	route := &Route{
 		Method:        strings.ToUpper(verb),
 		Path:          path,
-		Funcs:         funcs,
+		Callbacks:     funcs,
 		CaseSensitive: this.CaseSensitive,
 		Strict:        this.Strict,
 	}
@@ -46,7 +46,7 @@ func (this *Router) AddRoute(verb string, path string, funcs ...func(*Request, *
 /*
 	Calls the function defined for each key in "req.Params" if available.
 */
-func (this *Router) executeParamFuncs(req *Request, res *Response, next func()) (bool) {
+func (this *Router) executeParamFuncs(req *Request, res *Response, next func()) bool {
 	// Call each "param" function if one is set.
 	for name := range req.Params {
 		if pfn, ok := this.ParamFuncs[name]; ok {
@@ -63,8 +63,8 @@ func (this *Router) executeParamFuncs(req *Request, res *Response, next func()) 
 /*
 	Calls each function defined in the given route.
 */
-func (this *Router) executeRouteFuncs(req *Request, res *Response, next func(), route *Route) (bool) {
-	for _, rfn := range route.Funcs {
+func (this *Router) executeRouteFuncs(req *Request, res *Response, next func(), route *Route) bool {
+	for _, rfn := range route.Callbacks {
 		rfn(req, res, next)
 		// If the response has been "closed" by a "route" function then return.
 		if res.Closed == true {
@@ -87,6 +87,8 @@ func (this *Router) handle(req *Request, res *Response, next func()) {
 		if params, ok := route.Match(req.Method, path); ok {
 			// Set the route "params" found in the path.
 			req.Params = params
+			// Set the matched route.
+			req.Route = route
 			// Call "param" functions if they are defined.
 			// If it returns true then the connection has closed so stop processing.
 			if this.executeParamFuncs(req, res, next) {
