@@ -101,6 +101,9 @@ func (this *Router) handle(req *Request, res *Response, next func()) {
 			}
 		}
 	}
+
+	// If nothing closed the conection then call next().
+	next()
 }
 
 func (this *Router) Middleware(app *Server) func(req *stackr.Request, res *stackr.Response, next func()) {
